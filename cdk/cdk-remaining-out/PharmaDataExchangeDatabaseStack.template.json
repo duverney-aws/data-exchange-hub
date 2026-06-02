@@ -1,0 +1,230 @@
+{
+ "Resources": {
+  "CMOProfilesTable13459E3B": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "cmoId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "organizationName",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "organization-name-index",
+      "KeySchema": [
+       {
+        "AttributeName": "organizationName",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "cmoId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "cmo-profiles"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeDatabaseStack/CMOProfilesTable/Resource"
+   }
+  },
+  "DataContractsTable1E9BE7CA": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "contractId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "cmoId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "status",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "cmo-contracts-index",
+      "KeySchema": [
+       {
+        "AttributeName": "cmoId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "status",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "contractId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "data-contracts"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeDatabaseStack/DataContractsTable/Resource"
+   }
+  },
+  "PipelineExecutionsTable2DEF886F": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "contractId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "executionTimestamp",
+      "AttributeType": "N"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "contractId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "executionTimestamp",
+      "KeyType": "RANGE"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "pipeline-executions",
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeDatabaseStack/PipelineExecutionsTable/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zXISwqAIBRA0bU411faEtpAWPN4fiKzFFKJiPYeFI3u4Qrgooaa4JGYNp6tTsHVZ9Se4pFGcwbcolFwDahWS9spvLiptCmWXb/r9027M88xVA3wBgRZknNsLyG7zYL8+gAPwpuscQAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeDatabaseStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06": {
+   "Value": {
+    "Fn::GetAtt": [
+     "DataContractsTable1E9BE7CA",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+   }
+  },
+  "ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96": {
+   "Value": {
+    "Ref": "DataContractsTable1E9BE7CA"
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeDatabaseStack:ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96"
+   }
+  },
+  "ExportsOutputFnGetAttPipelineExecutionsTable2DEF886FArn3CFA2C9F": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PipelineExecutionsTable2DEF886F",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttPipelineExecutionsTable2DEF886FArn3CFA2C9F"
+   }
+  },
+  "ExportsOutputRefPipelineExecutionsTable2DEF886FD1665DC2": {
+   "Value": {
+    "Ref": "PipelineExecutionsTable2DEF886F"
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeDatabaseStack:ExportsOutputRefPipelineExecutionsTable2DEF886FD1665DC2"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

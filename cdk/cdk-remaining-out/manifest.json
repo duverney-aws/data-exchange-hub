@@ -1,0 +1,964 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "PharmaDataExchangeSecretsStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeSecretsStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeSecretsStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeSecretsStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/9d0545acf8c53debf7f9de435aad28118c25e78e1f71ac7fa08d792b78d74c0b.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeSecretsStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeSecretsStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeSecretsStack/SecretsKMSKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SecretsKMSKeyC6B112A6"
+          }
+        ],
+        "/PharmaDataExchangeSecretsStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeSecretsStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeSecretsStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeSecretsStack"
+    },
+    "PharmaDataExchangeDatabaseStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeDatabaseStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeDatabaseStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeDatabaseStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/07186e73b6072f2fa1205badeda8a43b8a231aa47d8bd5ae600f1167a019781d.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeDatabaseStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeSecretsStack",
+        "PharmaDataExchangeDatabaseStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeDatabaseStack/CMOProfilesTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "CMOProfilesTable13459E3B"
+            }
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/CMOProfilesTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CMOProfilesTable13459E3B"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/DataContractsTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "DataContractsTable1E9BE7CA"
+            }
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/DataContractsTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DataContractsTable1E9BE7CA"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/PipelineExecutionsTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "PipelineExecutionsTable2DEF886F"
+            }
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/PipelineExecutionsTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineExecutionsTable2DEF886F"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"DataContractsTable1E9BE7CA\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/Exports/Output{\"Ref\":\"DataContractsTable1E9BE7CA\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"PipelineExecutionsTable2DEF886F\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttPipelineExecutionsTable2DEF886FArn3CFA2C9F"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/Exports/Output{\"Ref\":\"PipelineExecutionsTable2DEF886F\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefPipelineExecutionsTable2DEF886FD1665DC2"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeDatabaseStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeDatabaseStack"
+    },
+    "PharmaDataExchangeDataLakeStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeDataLakeStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeDataLakeStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeDataLakeStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/2a57cc3b8e0ccde15ad41988f1820c18ffbe6af347ba4896918316212161d855.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeDataLakeStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeDatabaseStack",
+        "PharmaDataExchangeDataLakeStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeDataLakeStack/DataLakeKMSKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DataLakeKMSKey52176C82"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/DataLakeBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DataLakeBucket0256EA8E"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/DataLakeBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DataLakeBucketPolicy52869FB4"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/QualityResultsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QualityResultsBucket92198BE3"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/QualityResultsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QualityResultsBucketPolicy8F55F2F0"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/AuditLogsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditLogsBucket963995A4"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/AuditLogsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditLogsBucketPolicyCC30EEAF"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/AthenaResultsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AthenaResultsBucket879938FA"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/AthenaResultsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AthenaResultsBucketPolicyD63DEF63"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/Exports/Output{\"Fn::GetAtt\":[\"DataLakeBucket0256EA8E\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttDataLakeBucket0256EA8EArn1F6EDADC"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/Exports/Output{\"Fn::GetAtt\":[\"DataLakeKMSKey52176C82\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttDataLakeKMSKey52176C82Arn9D25A7BB"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/Exports/Output{\"Ref\":\"DataLakeBucket0256EA8E\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefDataLakeBucket0256EA8EA38B2E65"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeDataLakeStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeDataLakeStack"
+    },
+    "PharmaDataExchangeMonitoringStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeMonitoringStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeMonitoringStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeMonitoringStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/0f0012bfdc4b18a899d7f440d2f590a2aa2f8ca82d97558efe6dc78072fc3b9e.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeMonitoringStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeDataLakeStack",
+        "PharmaDataExchangeMonitoringStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeMonitoringStack/APILogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "APILogGroup566E111F"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/PipelineLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineLogGroup1CF6DEF2"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/ETLLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ETLLogGroupE6B6AA8A"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/SchemaRegistryLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SchemaRegistryLogGroup75202152"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/AIProcessingLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AIProcessingLogGroupA4047BD2"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/CriticalAlertsTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CriticalAlertsTopicF16F2E77"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/WarningAlertsTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WarningAlertsTopic278F5B4C"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/SLABreachTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SLABreachTopicF23C37EB"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/MainDashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MainDashboard5197298C"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/ExecutionTimeWarningAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExecutionTimeWarningAlarm372FB096"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/ExecutionTimeCriticalAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExecutionTimeCriticalAlarmA8CDFD87"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/QualityScoreWarningAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QualityScoreWarningAlarm7E6FD815"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/QualityScoreCriticalAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QualityScoreCriticalAlarm200486CC"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/SuccessRateWarningAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SuccessRateWarningAlarm43B8AC13"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/SuccessRateCriticalAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SuccessRateCriticalAlarm87E585C1"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/Exports/Output{\"Ref\":\"CriticalAlertsTopicF16F2E77\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/Exports/Output{\"Ref\":\"WarningAlertsTopic278F5B4C\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/Exports/Output{\"Fn::GetAtt\":[\"PipelineLogGroup1CF6DEF2\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttPipelineLogGroup1CF6DEF2Arn61F280E7"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeMonitoringStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeMonitoringStack"
+    },
+    "PharmaDataExchangeContractApiStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeContractApiStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeContractApiStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeContractApiStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/113c610071118162bac833ed321896346279b7f7c1323f28d2f955a9ecf815fb.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeContractApiStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeDatabaseStack",
+        "PharmaDataExchangeContractApiStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiHandlerServiceRole85619981"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiHandlerServiceRoleDefaultPolicyDB207745"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApiHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiHandler7C65ADCC"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApi790206E3"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiDeployment78648640681538c67fbcace6f52e839eb18af7a4"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiDeploymentStageprod2118A51D"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiEndpointB0D788D6"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiOPTIONS0B27E423"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapi307015FE"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapiOPTIONSD57403B2"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontract7CEF3644"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractOPTIONS72456119"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractPOSTApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontractA947C71F"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractPOSTApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontract105E8779"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractPOSTA3A0FF6C"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdF07C6972"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdOPTIONSA2BAB9DE"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdGETApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3GETapicontractcontractIdD796EEF4"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdGETApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3GETapicontractcontractIdE40DDFAB"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdGET6AB32B42"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdPUTApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3PUTapicontractcontractIdE4AABF42"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdPUTApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3PUTapicontractcontractId7F738BEB"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdPUTA57D4B0E"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdactivateC179782D"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdactivateOPTIONSE8B7E068"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdactivatePOSTApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontractcontractIdactivate3A77FDDE"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdactivatePOSTApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontractcontractIdactivateDB439882"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ContractApiapicontractcontractIdactivatePOST456F6954"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeContractApiStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeContractApiStack"
+    },
+    "PharmaDataExchangePipelineOrchestrationStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangePipelineOrchestrationStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangePipelineOrchestrationStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangePipelineOrchestrationStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/92d7493fe1bd5571a4401aadc4d7a1dacbfd7732c1893e688387ed6465c81056.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangePipelineOrchestrationStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeDatabaseStack",
+        "PharmaDataExchangeDataLakeStack",
+        "PharmaDataExchangeMonitoringStack",
+        "PharmaDataExchangeSecretsStack",
+        "PharmaDataExchangePipelineOrchestrationStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineOrchestrationHandlerServiceRole5F87C487"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineOrchestrationHandlerServiceRoleDefaultPolicy5CE0C4AC"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineOrchestrationHandler829F9113"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineDeploymentStateMachineRoleB55834B1"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineDeploymentStateMachineRoleDefaultPolicy7C292ADC"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PipelineDeploymentStateMachine80816A36"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangePipelineOrchestrationStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangePipelineOrchestrationStack"
+    },
+    "PharmaDataExchangeSecurityStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeSecurityStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeSecurityStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeSecurityStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/28dfe6dd447fc73b8d92a5055b3f07a01650723b35745d4161997a2c8d5c2ac4.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeSecurityStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeDataLakeStack",
+        "PharmaDataExchangeDatabaseStack",
+        "PharmaDataExchangeSecurityStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeSecurityStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeSecurityStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeSecurityStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeSecurityStack"
+    },
+    "PharmaDataExchangeAuditComplianceStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "PharmaDataExchangeAuditComplianceStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "PharmaDataExchangeAuditComplianceStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://550129454303/us-east-1",
+      "properties": {
+        "templateFile": "PharmaDataExchangeAuditComplianceStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-deploy-role-550129454303-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-cfn-exec-role-550129454303-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-550129454303-us-east-1/a2db8a1945e61c00bfe629cf65ab51bda979eded2bf5b34079961c676c6d3a05.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "PharmaDataExchangeAuditComplianceStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-lookup-role-550129454303-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "PharmaDataExchangeDataLakeStack",
+        "PharmaDataExchangeAuditComplianceStack.assets"
+      ],
+      "metadata": {
+        "/PharmaDataExchangeAuditComplianceStack/AuditKMSKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditKMSKeyEFEBA47A"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/AuditTrailBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditTrailBucket677225EC"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/AuditTrailBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditTrailBucketPolicy00994082"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/CloudTrailLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CloudTrailLogGroup343A29D6"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CloudTrailLogsRoleF52E25E9"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CloudTrailLogsRoleDefaultPolicy50A4B1EC"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditTrailLogsRole4829C622"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditTrailLogsRoleDefaultPolicyF057B068"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/AuditTrail/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditTrailFF0F2BB5"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/PharmaDataExchangeAuditComplianceStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "PharmaDataExchangeAuditComplianceStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,4152 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "PharmaDataExchangeSecretsStack": {
+        "id": "PharmaDataExchangeSecretsStack",
+        "path": "PharmaDataExchangeSecretsStack",
+        "children": {
+          "SecretsKMSKey": {
+            "id": "SecretsKMSKey",
+            "path": "PharmaDataExchangeSecretsStack/SecretsKMSKey",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeSecretsStack/SecretsKMSKey/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Key",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "KMS key for encrypting CMO credentials and secrets",
+                    "enableKeyRotation": true,
+                    "keyPolicy": {
+                      "Statement": [
+                        {
+                          "Action": "kms:*",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::550129454303:root"
+                          },
+                          "Resource": "*"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnKey",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Key",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeSecretsStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeSecretsStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeSecretsStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeSecretsStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangeDatabaseStack": {
+        "id": "PharmaDataExchangeDatabaseStack",
+        "path": "PharmaDataExchangeDatabaseStack",
+        "children": {
+          "CMOProfilesTable": {
+            "id": "CMOProfilesTable",
+            "path": "PharmaDataExchangeDatabaseStack/CMOProfilesTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDatabaseStack/CMOProfilesTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "cmoId",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "organizationName",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "organization-name-index",
+                        "keySchema": [
+                          {
+                            "attributeName": "organizationName",
+                            "keyType": "HASH"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "cmoId",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true
+                    },
+                    "tableName": "cmo-profiles"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.120.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "PharmaDataExchangeDatabaseStack/CMOProfilesTable/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.120.0"
+            }
+          },
+          "DataContractsTable": {
+            "id": "DataContractsTable",
+            "path": "PharmaDataExchangeDatabaseStack/DataContractsTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDatabaseStack/DataContractsTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "contractId",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "cmoId",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "status",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "cmo-contracts-index",
+                        "keySchema": [
+                          {
+                            "attributeName": "cmoId",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "status",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "contractId",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true
+                    },
+                    "tableName": "data-contracts"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.120.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "PharmaDataExchangeDatabaseStack/DataContractsTable/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.120.0"
+            }
+          },
+          "PipelineExecutionsTable": {
+            "id": "PipelineExecutionsTable",
+            "path": "PharmaDataExchangeDatabaseStack/PipelineExecutionsTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDatabaseStack/PipelineExecutionsTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "contractId",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "executionTimestamp",
+                        "attributeType": "N"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "keySchema": [
+                      {
+                        "attributeName": "contractId",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "executionTimestamp",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "sseSpecification": {
+                      "sseEnabled": true
+                    },
+                    "tableName": "pipeline-executions",
+                    "timeToLiveSpecification": {
+                      "attributeName": "ttl",
+                      "enabled": true
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.120.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "PharmaDataExchangeDatabaseStack/PipelineExecutionsTable/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeDatabaseStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeDatabaseStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "PharmaDataExchangeDatabaseStack/Exports",
+            "children": {
+              "Output{\"Fn::GetAtt\":[\"DataContractsTable1E9BE7CA\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"DataContractsTable1E9BE7CA\",\"Arn\"]}",
+                "path": "PharmaDataExchangeDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"DataContractsTable1E9BE7CA\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Ref\":\"DataContractsTable1E9BE7CA\"}": {
+                "id": "Output{\"Ref\":\"DataContractsTable1E9BE7CA\"}",
+                "path": "PharmaDataExchangeDatabaseStack/Exports/Output{\"Ref\":\"DataContractsTable1E9BE7CA\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"PipelineExecutionsTable2DEF886F\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"PipelineExecutionsTable2DEF886F\",\"Arn\"]}",
+                "path": "PharmaDataExchangeDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"PipelineExecutionsTable2DEF886F\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Ref\":\"PipelineExecutionsTable2DEF886F\"}": {
+                "id": "Output{\"Ref\":\"PipelineExecutionsTable2DEF886F\"}",
+                "path": "PharmaDataExchangeDatabaseStack/Exports/Output{\"Ref\":\"PipelineExecutionsTable2DEF886F\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeDatabaseStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeDatabaseStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangeDataLakeStack": {
+        "id": "PharmaDataExchangeDataLakeStack",
+        "path": "PharmaDataExchangeDataLakeStack",
+        "children": {
+          "DataLakeKMSKey": {
+            "id": "DataLakeKMSKey",
+            "path": "PharmaDataExchangeDataLakeStack/DataLakeKMSKey",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDataLakeStack/DataLakeKMSKey/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Key",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "KMS key for Pharma Data Exchange Hub data lake encryption",
+                    "enableKeyRotation": true,
+                    "keyPolicy": {
+                      "Statement": [
+                        {
+                          "Action": "kms:*",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::550129454303:root"
+                          },
+                          "Resource": "*"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnKey",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Key",
+              "version": "2.120.0"
+            }
+          },
+          "DataLakeBucket": {
+            "id": "DataLakeBucket",
+            "path": "PharmaDataExchangeDataLakeStack/DataLakeBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDataLakeStack/DataLakeBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "DataLakeKMSKey52176C82",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "id": "bronze-layer-lifecycle",
+                          "prefix": "bronze/",
+                          "status": "Enabled",
+                          "transitions": [
+                            {
+                              "storageClass": "GLACIER",
+                              "transitionInDays": 90
+                            }
+                          ]
+                        },
+                        {
+                          "id": "silver-layer-lifecycle",
+                          "prefix": "silver/",
+                          "status": "Enabled",
+                          "transitions": [
+                            {
+                              "storageClass": "GLACIER",
+                              "transitionInDays": 180
+                            }
+                          ]
+                        },
+                        {
+                          "expirationInDays": 30,
+                          "id": "quarantine-cleanup",
+                          "prefix": "bronze/quarantine/",
+                          "status": "Enabled"
+                        }
+                      ]
+                    },
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.120.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "PharmaDataExchangeDataLakeStack/DataLakeBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeDataLakeStack/DataLakeBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "DataLakeBucket0256EA8E"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "DataLakeBucket0256EA8E",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "DataLakeBucket0256EA8E",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Action": [
+                                "s3:DeleteObject",
+                                "s3:GetObject",
+                                "s3:ListBucket",
+                                "s3:PutObject"
+                              ],
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lakeformation.amazonaws.com"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "DataLakeBucket0256EA8E",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "DataLakeBucket0256EA8E",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ],
+                              "Sid": "AllowLakeFormationAccess"
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.120.0"
+            }
+          },
+          "QualityResultsBucket": {
+            "id": "QualityResultsBucket",
+            "path": "PharmaDataExchangeDataLakeStack/QualityResultsBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDataLakeStack/QualityResultsBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "DataLakeKMSKey52176C82",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "expirationInDays": 365,
+                          "id": "quality-results-retention",
+                          "status": "Enabled"
+                        }
+                      ]
+                    },
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.120.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "PharmaDataExchangeDataLakeStack/QualityResultsBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeDataLakeStack/QualityResultsBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "QualityResultsBucket92198BE3"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "QualityResultsBucket92198BE3",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "QualityResultsBucket92198BE3",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.120.0"
+            }
+          },
+          "AuditLogsBucket": {
+            "id": "AuditLogsBucket",
+            "path": "PharmaDataExchangeDataLakeStack/AuditLogsBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDataLakeStack/AuditLogsBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "DataLakeKMSKey52176C82",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "expirationInDays": 2555,
+                          "id": "audit-logs-retention",
+                          "status": "Enabled"
+                        }
+                      ]
+                    },
+                    "objectLockEnabled": true,
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.120.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "PharmaDataExchangeDataLakeStack/AuditLogsBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeDataLakeStack/AuditLogsBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "AuditLogsBucket963995A4"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "AuditLogsBucket963995A4",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "AuditLogsBucket963995A4",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.120.0"
+            }
+          },
+          "AthenaResultsBucket": {
+            "id": "AthenaResultsBucket",
+            "path": "PharmaDataExchangeDataLakeStack/AthenaResultsBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeDataLakeStack/AthenaResultsBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "DataLakeKMSKey52176C82",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "expirationInDays": 30,
+                          "id": "athena-results-cleanup",
+                          "status": "Enabled"
+                        }
+                      ]
+                    },
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.120.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "PharmaDataExchangeDataLakeStack/AthenaResultsBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeDataLakeStack/AthenaResultsBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "AthenaResultsBucket879938FA"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "AthenaResultsBucket879938FA",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "AthenaResultsBucket879938FA",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeDataLakeStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeDataLakeStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "PharmaDataExchangeDataLakeStack/Exports",
+            "children": {
+              "Output{\"Fn::GetAtt\":[\"DataLakeBucket0256EA8E\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"DataLakeBucket0256EA8E\",\"Arn\"]}",
+                "path": "PharmaDataExchangeDataLakeStack/Exports/Output{\"Fn::GetAtt\":[\"DataLakeBucket0256EA8E\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"DataLakeKMSKey52176C82\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"DataLakeKMSKey52176C82\",\"Arn\"]}",
+                "path": "PharmaDataExchangeDataLakeStack/Exports/Output{\"Fn::GetAtt\":[\"DataLakeKMSKey52176C82\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Ref\":\"DataLakeBucket0256EA8E\"}": {
+                "id": "Output{\"Ref\":\"DataLakeBucket0256EA8E\"}",
+                "path": "PharmaDataExchangeDataLakeStack/Exports/Output{\"Ref\":\"DataLakeBucket0256EA8E\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeDataLakeStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeDataLakeStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangeMonitoringStack": {
+        "id": "PharmaDataExchangeMonitoringStack",
+        "path": "PharmaDataExchangeMonitoringStack",
+        "children": {
+          "APILogGroup": {
+            "id": "APILogGroup",
+            "path": "PharmaDataExchangeMonitoringStack/APILogGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/APILogGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/pharma-data-exchange/api",
+                    "retentionInDays": 365
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.120.0"
+            }
+          },
+          "PipelineLogGroup": {
+            "id": "PipelineLogGroup",
+            "path": "PharmaDataExchangeMonitoringStack/PipelineLogGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/PipelineLogGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/pharma-data-exchange/pipeline",
+                    "retentionInDays": 365
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.120.0"
+            }
+          },
+          "ETLLogGroup": {
+            "id": "ETLLogGroup",
+            "path": "PharmaDataExchangeMonitoringStack/ETLLogGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/ETLLogGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/pharma-data-exchange/etl",
+                    "retentionInDays": 365
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.120.0"
+            }
+          },
+          "SchemaRegistryLogGroup": {
+            "id": "SchemaRegistryLogGroup",
+            "path": "PharmaDataExchangeMonitoringStack/SchemaRegistryLogGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/SchemaRegistryLogGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/pharma-data-exchange/schema-registry",
+                    "retentionInDays": 365
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.120.0"
+            }
+          },
+          "AIProcessingLogGroup": {
+            "id": "AIProcessingLogGroup",
+            "path": "PharmaDataExchangeMonitoringStack/AIProcessingLogGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/AIProcessingLogGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/pharma-data-exchange/ai-processing",
+                    "retentionInDays": 365
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.120.0"
+            }
+          },
+          "CriticalAlertsTopic": {
+            "id": "CriticalAlertsTopic",
+            "path": "PharmaDataExchangeMonitoringStack/CriticalAlertsTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/CriticalAlertsTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {
+                    "displayName": "Critical Alerts for Pharma Data Exchange Hub",
+                    "topicName": "pharma-data-exchange-critical-alerts"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.120.0"
+            }
+          },
+          "WarningAlertsTopic": {
+            "id": "WarningAlertsTopic",
+            "path": "PharmaDataExchangeMonitoringStack/WarningAlertsTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/WarningAlertsTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {
+                    "displayName": "Warning Alerts for Pharma Data Exchange Hub",
+                    "topicName": "pharma-data-exchange-warning-alerts"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.120.0"
+            }
+          },
+          "SLABreachTopic": {
+            "id": "SLABreachTopic",
+            "path": "PharmaDataExchangeMonitoringStack/SLABreachTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/SLABreachTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {
+                    "displayName": "SLA Breach Notifications",
+                    "topicName": "pharma-data-exchange-sla-breach"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.120.0"
+            }
+          },
+          "MainDashboard": {
+            "id": "MainDashboard",
+            "path": "PharmaDataExchangeMonitoringStack/MainDashboard",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/MainDashboard/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Dashboard",
+                  "aws:cdk:cloudformation:props": {
+                    "dashboardBody": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Pharma Data Exchange Hub - Operational Dashboard\\n\\nMonitor CMO data pipelines, quality metrics, and SLA compliance.\"}},{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":2,\"properties\":{\"markdown\":\"## SLA Compliance\\n\\nExecution time, quality scores, availability, and success rate per CMO.\"}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":4,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Execution Time\",\"region\":\"",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "\",\"metrics\":[[\"CMO/DataPipeline\",\"ExecutionTime\",\"CMOId\",\"ALL\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":4,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Quality Score\",\"region\":\"",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "\",\"metrics\":[[\"CMO/DataPipeline\",\"QualityScore\",\"CMOId\",\"ALL\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Availability Percent\",\"region\":\"",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "\",\"metrics\":[[\"CMO/DataPipeline\",\"AvailabilityPercent\",\"CMOId\",\"ALL\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":10,\"properties\":{\"view\":\"singleValue\",\"title\":\"Success Rate\",\"region\":\"",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "\",\"metrics\":[[\"CMO/DataPipeline\",\"SuccessRate\",\"CMOId\",\"ALL\"]]}}]}"
+                        ]
+                      ]
+                    },
+                    "dashboardName": "PharmaDataExchangeHub"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnDashboard",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard",
+              "version": "2.120.0"
+            }
+          },
+          "ExecutionTimeWarningAlarm": {
+            "id": "ExecutionTimeWarningAlarm",
+            "path": "PharmaDataExchangeMonitoringStack/ExecutionTimeWarningAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/ExecutionTimeWarningAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "WarningAlertsTopic278F5B4C"
+                      }
+                    ],
+                    "alarmDescription": "ExecutionTime exceeded 80% of SLA (2880s of 3600s max)",
+                    "alarmName": "SLA-ExecutionTime-Warning",
+                    "comparisonOperator": "GreaterThanThreshold",
+                    "dimensions": [
+                      {
+                        "name": "CMOId",
+                        "value": "ALL"
+                      }
+                    ],
+                    "evaluationPeriods": 3,
+                    "metricName": "ExecutionTime",
+                    "namespace": "CMO/DataPipeline",
+                    "period": 300,
+                    "statistic": "Average",
+                    "threshold": 2880,
+                    "treatMissingData": "notBreaching"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.120.0"
+            }
+          },
+          "ExecutionTimeCriticalAlarm": {
+            "id": "ExecutionTimeCriticalAlarm",
+            "path": "PharmaDataExchangeMonitoringStack/ExecutionTimeCriticalAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/ExecutionTimeCriticalAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "CriticalAlertsTopicF16F2E77"
+                      },
+                      {
+                        "Ref": "SLABreachTopicF23C37EB"
+                      }
+                    ],
+                    "alarmDescription": "ExecutionTime exceeded 100% of SLA (3600s max)",
+                    "alarmName": "SLA-ExecutionTime-Critical",
+                    "comparisonOperator": "GreaterThanThreshold",
+                    "dimensions": [
+                      {
+                        "name": "CMOId",
+                        "value": "ALL"
+                      }
+                    ],
+                    "evaluationPeriods": 3,
+                    "metricName": "ExecutionTime",
+                    "namespace": "CMO/DataPipeline",
+                    "period": 300,
+                    "statistic": "Average",
+                    "threshold": 3600,
+                    "treatMissingData": "notBreaching"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.120.0"
+            }
+          },
+          "QualityScoreWarningAlarm": {
+            "id": "QualityScoreWarningAlarm",
+            "path": "PharmaDataExchangeMonitoringStack/QualityScoreWarningAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/QualityScoreWarningAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "WarningAlertsTopic278F5B4C"
+                      }
+                    ],
+                    "alarmDescription": "QualityScore dropped below warning threshold (95%)",
+                    "alarmName": "SLA-QualityScore-Warning",
+                    "comparisonOperator": "LessThanThreshold",
+                    "dimensions": [
+                      {
+                        "name": "CMOId",
+                        "value": "ALL"
+                      }
+                    ],
+                    "evaluationPeriods": 3,
+                    "metricName": "QualityScore",
+                    "namespace": "CMO/DataPipeline",
+                    "period": 300,
+                    "statistic": "Average",
+                    "threshold": 95,
+                    "treatMissingData": "notBreaching"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.120.0"
+            }
+          },
+          "QualityScoreCriticalAlarm": {
+            "id": "QualityScoreCriticalAlarm",
+            "path": "PharmaDataExchangeMonitoringStack/QualityScoreCriticalAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/QualityScoreCriticalAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "CriticalAlertsTopicF16F2E77"
+                      },
+                      {
+                        "Ref": "SLABreachTopicF23C37EB"
+                      }
+                    ],
+                    "alarmDescription": "QualityScore dropped below critical threshold (90%)",
+                    "alarmName": "SLA-QualityScore-Critical",
+                    "comparisonOperator": "LessThanThreshold",
+                    "dimensions": [
+                      {
+                        "name": "CMOId",
+                        "value": "ALL"
+                      }
+                    ],
+                    "evaluationPeriods": 3,
+                    "metricName": "QualityScore",
+                    "namespace": "CMO/DataPipeline",
+                    "period": 300,
+                    "statistic": "Average",
+                    "threshold": 90,
+                    "treatMissingData": "notBreaching"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.120.0"
+            }
+          },
+          "SuccessRateWarningAlarm": {
+            "id": "SuccessRateWarningAlarm",
+            "path": "PharmaDataExchangeMonitoringStack/SuccessRateWarningAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/SuccessRateWarningAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "WarningAlertsTopic278F5B4C"
+                      }
+                    ],
+                    "alarmDescription": "SuccessRate dropped below warning threshold (99%)",
+                    "alarmName": "SLA-SuccessRate-Warning",
+                    "comparisonOperator": "LessThanThreshold",
+                    "dimensions": [
+                      {
+                        "name": "CMOId",
+                        "value": "ALL"
+                      }
+                    ],
+                    "evaluationPeriods": 3,
+                    "metricName": "SuccessRate",
+                    "namespace": "CMO/DataPipeline",
+                    "period": 300,
+                    "statistic": "Average",
+                    "threshold": 99,
+                    "treatMissingData": "notBreaching"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.120.0"
+            }
+          },
+          "SuccessRateCriticalAlarm": {
+            "id": "SuccessRateCriticalAlarm",
+            "path": "PharmaDataExchangeMonitoringStack/SuccessRateCriticalAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeMonitoringStack/SuccessRateCriticalAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "CriticalAlertsTopicF16F2E77"
+                      },
+                      {
+                        "Ref": "SLABreachTopicF23C37EB"
+                      }
+                    ],
+                    "alarmDescription": "SuccessRate dropped below critical threshold (95%)",
+                    "alarmName": "SLA-SuccessRate-Critical",
+                    "comparisonOperator": "LessThanThreshold",
+                    "dimensions": [
+                      {
+                        "name": "CMOId",
+                        "value": "ALL"
+                      }
+                    ],
+                    "evaluationPeriods": 3,
+                    "metricName": "SuccessRate",
+                    "namespace": "CMO/DataPipeline",
+                    "period": 300,
+                    "statistic": "Average",
+                    "threshold": 95,
+                    "treatMissingData": "notBreaching"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeMonitoringStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeMonitoringStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "PharmaDataExchangeMonitoringStack/Exports",
+            "children": {
+              "Output{\"Ref\":\"CriticalAlertsTopicF16F2E77\"}": {
+                "id": "Output{\"Ref\":\"CriticalAlertsTopicF16F2E77\"}",
+                "path": "PharmaDataExchangeMonitoringStack/Exports/Output{\"Ref\":\"CriticalAlertsTopicF16F2E77\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Ref\":\"WarningAlertsTopic278F5B4C\"}": {
+                "id": "Output{\"Ref\":\"WarningAlertsTopic278F5B4C\"}",
+                "path": "PharmaDataExchangeMonitoringStack/Exports/Output{\"Ref\":\"WarningAlertsTopic278F5B4C\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"PipelineLogGroup1CF6DEF2\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"PipelineLogGroup1CF6DEF2\",\"Arn\"]}",
+                "path": "PharmaDataExchangeMonitoringStack/Exports/Output{\"Fn::GetAtt\":[\"PipelineLogGroup1CF6DEF2\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeMonitoringStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeMonitoringStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangeContractApiStack": {
+        "id": "PharmaDataExchangeContractApiStack",
+        "path": "PharmaDataExchangeContractApiStack",
+        "children": {
+          "ContractApiHandler": {
+            "id": "ContractApiHandler",
+            "path": "PharmaDataExchangeContractApiStack/ContractApiHandler",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:BatchWriteItem",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DeleteItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:PutItem",
+                                    "dynamodb:Query",
+                                    "dynamodb:Scan",
+                                    "dynamodb:UpdateItem"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+                                          },
+                                          "/index/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "ContractApiHandlerServiceRoleDefaultPolicyDB207745",
+                            "roles": [
+                              {
+                                "Ref": "ContractApiHandlerServiceRole85619981"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.120.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.120.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.120.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeContractApiStack/ContractApiHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-550129454303-us-east-1",
+                      "s3Key": "9b87ddbdc3332600ae3fd577cb75d51ae6b8c464043eb03baef1274e7c7fbe3d.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "TABLE_NAME": {
+                          "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96"
+                        }
+                      }
+                    },
+                    "handler": "handler.handler",
+                    "memorySize": 256,
+                    "role": {
+                      "Fn::GetAtt": [
+                        "ContractApiHandlerServiceRole85619981",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.12",
+                    "timeout": 30
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.120.0"
+            }
+          },
+          "ContractApi": {
+            "id": "ContractApi",
+            "path": "PharmaDataExchangeContractApiStack/ContractApi",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeContractApiStack/ContractApi/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "Data Contract Management API",
+                    "name": "Contract API"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                  "version": "2.120.0"
+                }
+              },
+              "Deployment": {
+                "id": "Deployment",
+                "path": "PharmaDataExchangeContractApiStack/ContractApi/Deployment",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Deployment/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                      "aws:cdk:cloudformation:props": {
+                        "description": "Data Contract Management API",
+                        "restApiId": {
+                          "Ref": "ContractApi790206E3"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+                  "version": "2.120.0"
+                }
+              },
+              "DeploymentStage.prod": {
+                "id": "DeploymentStage.prod",
+                "path": "PharmaDataExchangeContractApiStack/ContractApi/DeploymentStage.prod",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApi/DeploymentStage.prod/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                      "aws:cdk:cloudformation:props": {
+                        "deploymentId": {
+                          "Ref": "ContractApiDeployment78648640681538c67fbcace6f52e839eb18af7a4"
+                        },
+                        "restApiId": {
+                          "Ref": "ContractApi790206E3"
+                        },
+                        "stageName": "prod"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+                  "version": "2.120.0"
+                }
+              },
+              "Endpoint": {
+                "id": "Endpoint",
+                "path": "PharmaDataExchangeContractApiStack/ContractApi/Endpoint",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.120.0"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default",
+                "children": {
+                  "OPTIONS": {
+                    "id": "OPTIONS",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/OPTIONS",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/OPTIONS/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "apiKeyRequired": false,
+                            "authorizationType": "NONE",
+                            "httpMethod": "OPTIONS",
+                            "integration": {
+                              "type": "MOCK",
+                              "requestTemplates": {
+                                "application/json": "{ statusCode: 200 }"
+                              },
+                              "integrationResponses": [
+                                {
+                                  "statusCode": "204",
+                                  "responseParameters": {
+                                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                  }
+                                }
+                              ]
+                            },
+                            "methodResponses": [
+                              {
+                                "statusCode": "204",
+                                "responseParameters": {
+                                  "method.response.header.Access-Control-Allow-Headers": true,
+                                  "method.response.header.Access-Control-Allow-Origin": true,
+                                  "method.response.header.Access-Control-Allow-Methods": true
+                                }
+                              }
+                            ],
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "ContractApi790206E3",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "ContractApi790206E3"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.120.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "api": {
+                    "id": "api",
+                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "ContractApi790206E3",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": "api",
+                            "restApiId": {
+                              "Ref": "ContractApi790206E3"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.120.0"
+                        }
+                      },
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "apiKeyRequired": false,
+                                "authorizationType": "NONE",
+                                "httpMethod": "OPTIONS",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true
+                                    }
+                                  }
+                                ],
+                                "resourceId": {
+                                  "Ref": "ContractApiapi307015FE"
+                                },
+                                "restApiId": {
+                                  "Ref": "ContractApi790206E3"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.120.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.120.0"
+                        }
+                      },
+                      "contract": {
+                        "id": "contract",
+                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "ContractApiapi307015FE"
+                                },
+                                "pathPart": "contract",
+                                "restApiId": {
+                                  "Ref": "ContractApi790206E3"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.120.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "apiKeyRequired": false,
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "OPTIONS",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true
+                                        }
+                                      }
+                                    ],
+                                    "resourceId": {
+                                      "Ref": "ContractApiapicontract7CEF3644"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "ContractApi790206E3"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.120.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.120.0"
+                            }
+                          },
+                          "POST": {
+                            "id": "POST",
+                            "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST",
+                            "children": {
+                              "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract": {
+                                "id": "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "ContractApiHandler7C65ADCC",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:aws:execute-api:us-east-1:550129454303:",
+                                          {
+                                            "Ref": "ContractApi790206E3"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "ContractApiDeploymentStageprod2118A51D"
+                                          },
+                                          "/POST/api/contract"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.120.0"
+                                }
+                              },
+                              "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract": {
+                                "id": "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "ContractApiHandler7C65ADCC",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:aws:execute-api:us-east-1:550129454303:",
+                                          {
+                                            "Ref": "ContractApi790206E3"
+                                          },
+                                          "/test-invoke-stage/POST/api/contract"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.120.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "POST",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::GetAtt": [
+                                                "ContractApiHandler7C65ADCC",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    },
+                                    "resourceId": {
+                                      "Ref": "ContractApiapicontract7CEF3644"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "ContractApi790206E3"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.120.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.120.0"
+                            }
+                          },
+                          "{contractId}": {
+                            "id": "{contractId}",
+                            "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                                  "aws:cdk:cloudformation:props": {
+                                    "parentId": {
+                                      "Ref": "ContractApiapicontract7CEF3644"
+                                    },
+                                    "pathPart": "{contractId}",
+                                    "restApiId": {
+                                      "Ref": "ContractApi790206E3"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                                  "version": "2.120.0"
+                                }
+                              },
+                              "OPTIONS": {
+                                "id": "OPTIONS",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/OPTIONS",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/OPTIONS/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "apiKeyRequired": false,
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "OPTIONS",
+                                        "integration": {
+                                          "type": "MOCK",
+                                          "requestTemplates": {
+                                            "application/json": "{ statusCode: 200 }"
+                                          },
+                                          "integrationResponses": [
+                                            {
+                                              "statusCode": "204",
+                                              "responseParameters": {
+                                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "methodResponses": [
+                                          {
+                                            "statusCode": "204",
+                                            "responseParameters": {
+                                              "method.response.header.Access-Control-Allow-Headers": true,
+                                              "method.response.header.Access-Control-Allow-Origin": true,
+                                              "method.response.header.Access-Control-Allow-Methods": true
+                                            }
+                                          }
+                                        ],
+                                        "resourceId": {
+                                          "Ref": "ContractApiapicontractcontractIdF07C6972"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "ContractApi790206E3"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.120.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.120.0"
+                                }
+                              },
+                              "GET": {
+                                "id": "GET",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET",
+                                "children": {
+                                  "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}": {
+                                    "id": "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "ContractApiHandler7C65ADCC",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:aws:execute-api:us-east-1:550129454303:",
+                                              {
+                                                "Ref": "ContractApi790206E3"
+                                              },
+                                              "/",
+                                              {
+                                                "Ref": "ContractApiDeploymentStageprod2118A51D"
+                                              },
+                                              "/GET/api/contract/*"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.120.0"
+                                    }
+                                  },
+                                  "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}": {
+                                    "id": "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "ContractApiHandler7C65ADCC",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:aws:execute-api:us-east-1:550129454303:",
+                                              {
+                                                "Ref": "ContractApi790206E3"
+                                              },
+                                              "/test-invoke-stage/GET/api/contract/*"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.120.0"
+                                    }
+                                  },
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "GET",
+                                        "integration": {
+                                          "type": "AWS_PROXY",
+                                          "uri": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "ContractApiHandler7C65ADCC",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/invocations"
+                                              ]
+                                            ]
+                                          },
+                                          "integrationHttpMethod": "POST"
+                                        },
+                                        "resourceId": {
+                                          "Ref": "ContractApiapicontractcontractIdF07C6972"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "ContractApi790206E3"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.120.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.120.0"
+                                }
+                              },
+                              "PUT": {
+                                "id": "PUT",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT",
+                                "children": {
+                                  "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}": {
+                                    "id": "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "ContractApiHandler7C65ADCC",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:aws:execute-api:us-east-1:550129454303:",
+                                              {
+                                                "Ref": "ContractApi790206E3"
+                                              },
+                                              "/",
+                                              {
+                                                "Ref": "ContractApiDeploymentStageprod2118A51D"
+                                              },
+                                              "/PUT/api/contract/*"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.120.0"
+                                    }
+                                  },
+                                  "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}": {
+                                    "id": "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "ContractApiHandler7C65ADCC",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:aws:execute-api:us-east-1:550129454303:",
+                                              {
+                                                "Ref": "ContractApi790206E3"
+                                              },
+                                              "/test-invoke-stage/PUT/api/contract/*"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.120.0"
+                                    }
+                                  },
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "PUT",
+                                        "integration": {
+                                          "type": "AWS_PROXY",
+                                          "uri": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "ContractApiHandler7C65ADCC",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/invocations"
+                                              ]
+                                            ]
+                                          },
+                                          "integrationHttpMethod": "POST"
+                                        },
+                                        "resourceId": {
+                                          "Ref": "ContractApiapicontractcontractIdF07C6972"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "ContractApi790206E3"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.120.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.120.0"
+                                }
+                              },
+                              "activate": {
+                                "id": "activate",
+                                "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                                      "aws:cdk:cloudformation:props": {
+                                        "parentId": {
+                                          "Ref": "ContractApiapicontractcontractIdF07C6972"
+                                        },
+                                        "pathPart": "activate",
+                                        "restApiId": {
+                                          "Ref": "ContractApi790206E3"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                                      "version": "2.120.0"
+                                    }
+                                  },
+                                  "OPTIONS": {
+                                    "id": "OPTIONS",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/OPTIONS",
+                                    "children": {
+                                      "Resource": {
+                                        "id": "Resource",
+                                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/OPTIONS/Resource",
+                                        "attributes": {
+                                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                          "aws:cdk:cloudformation:props": {
+                                            "apiKeyRequired": false,
+                                            "authorizationType": "NONE",
+                                            "httpMethod": "OPTIONS",
+                                            "integration": {
+                                              "type": "MOCK",
+                                              "requestTemplates": {
+                                                "application/json": "{ statusCode: 200 }"
+                                              },
+                                              "integrationResponses": [
+                                                {
+                                                  "statusCode": "204",
+                                                  "responseParameters": {
+                                                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            "methodResponses": [
+                                              {
+                                                "statusCode": "204",
+                                                "responseParameters": {
+                                                  "method.response.header.Access-Control-Allow-Headers": true,
+                                                  "method.response.header.Access-Control-Allow-Origin": true,
+                                                  "method.response.header.Access-Control-Allow-Methods": true
+                                                }
+                                              }
+                                            ],
+                                            "resourceId": {
+                                              "Ref": "ContractApiapicontractcontractIdactivateC179782D"
+                                            },
+                                            "restApiId": {
+                                              "Ref": "ContractApi790206E3"
+                                            }
+                                          }
+                                        },
+                                        "constructInfo": {
+                                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                          "version": "2.120.0"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                      "version": "2.120.0"
+                                    }
+                                  },
+                                  "POST": {
+                                    "id": "POST",
+                                    "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST",
+                                    "children": {
+                                      "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate": {
+                                        "id": "ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate",
+                                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate",
+                                        "attributes": {
+                                          "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                          "aws:cdk:cloudformation:props": {
+                                            "action": "lambda:InvokeFunction",
+                                            "functionName": {
+                                              "Fn::GetAtt": [
+                                                "ContractApiHandler7C65ADCC",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "principal": "apigateway.amazonaws.com",
+                                            "sourceArn": {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  "arn:aws:execute-api:us-east-1:550129454303:",
+                                                  {
+                                                    "Ref": "ContractApi790206E3"
+                                                  },
+                                                  "/",
+                                                  {
+                                                    "Ref": "ContractApiDeploymentStageprod2118A51D"
+                                                  },
+                                                  "/POST/api/contract/*/activate"
+                                                ]
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "constructInfo": {
+                                          "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                          "version": "2.120.0"
+                                        }
+                                      },
+                                      "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate": {
+                                        "id": "ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate",
+                                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate",
+                                        "attributes": {
+                                          "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                          "aws:cdk:cloudformation:props": {
+                                            "action": "lambda:InvokeFunction",
+                                            "functionName": {
+                                              "Fn::GetAtt": [
+                                                "ContractApiHandler7C65ADCC",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "principal": "apigateway.amazonaws.com",
+                                            "sourceArn": {
+                                              "Fn::Join": [
+                                                "",
+                                                [
+                                                  "arn:aws:execute-api:us-east-1:550129454303:",
+                                                  {
+                                                    "Ref": "ContractApi790206E3"
+                                                  },
+                                                  "/test-invoke-stage/POST/api/contract/*/activate"
+                                                ]
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "constructInfo": {
+                                          "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                          "version": "2.120.0"
+                                        }
+                                      },
+                                      "Resource": {
+                                        "id": "Resource",
+                                        "path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/Resource",
+                                        "attributes": {
+                                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                          "aws:cdk:cloudformation:props": {
+                                            "authorizationType": "NONE",
+                                            "httpMethod": "POST",
+                                            "integration": {
+                                              "type": "AWS_PROXY",
+                                              "uri": {
+                                                "Fn::Join": [
+                                                  "",
+                                                  [
+                                                    "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                                                    {
+                                                      "Fn::GetAtt": [
+                                                        "ContractApiHandler7C65ADCC",
+                                                        "Arn"
+                                                      ]
+                                                    },
+                                                    "/invocations"
+                                                  ]
+                                                ]
+                                              },
+                                              "integrationHttpMethod": "POST"
+                                            },
+                                            "resourceId": {
+                                              "Ref": "ContractApiapicontractcontractIdactivateC179782D"
+                                            },
+                                            "restApiId": {
+                                              "Ref": "ContractApi790206E3"
+                                            }
+                                          }
+                                        },
+                                        "constructInfo": {
+                                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                          "version": "2.120.0"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                      "version": "2.120.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                                  "version": "2.120.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                              "version": "2.120.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.120.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeContractApiStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeContractApiStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeContractApiStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeContractApiStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangePipelineOrchestrationStack": {
+        "id": "PharmaDataExchangePipelineOrchestrationStack",
+        "path": "PharmaDataExchangePipelineOrchestrationStack",
+        "children": {
+          "PipelineOrchestrationHandler": {
+            "id": "PipelineOrchestrationHandler",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:Query",
+                                    "dynamodb:Scan"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+                                          },
+                                          "/index/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:BatchWriteItem",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DeleteItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:PutItem",
+                                    "dynamodb:Query",
+                                    "dynamodb:Scan",
+                                    "dynamodb:UpdateItem"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttPipelineExecutionsTable2DEF886FArn3CFA2C9F"
+                                    },
+                                    {
+                                      "Ref": "AWS::NoValue"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:Abort*",
+                                    "s3:DeleteObject*",
+                                    "s3:GetBucket*",
+                                    "s3:GetObject*",
+                                    "s3:List*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeBucket0256EA8EArn1F6EDADC"
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeBucket0256EA8EArn1F6EDADC"
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "kms:Decrypt",
+                                    "kms:DescribeKey",
+                                    "kms:Encrypt",
+                                    "kms:GenerateDataKey*",
+                                    "kms:ReEncrypt*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeKMSKey52176C82Arn9D25A7BB"
+                                  }
+                                },
+                                {
+                                  "Action": "sns:Publish",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE"
+                                    },
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D"
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "PipelineOrchestrationHandlerServiceRoleDefaultPolicy5CE0C4AC",
+                            "roles": [
+                              {
+                                "Ref": "PipelineOrchestrationHandlerServiceRole5F87C487"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.120.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.120.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.120.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-550129454303-us-east-1",
+                      "s3Key": "230554bf147492db9128ceb3c52e5203ef1d2da631ae05acaf54b7879829d192.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "CONTRACTS_TABLE_NAME": {
+                          "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96"
+                        },
+                        "EXECUTIONS_TABLE_NAME": {
+                          "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputRefPipelineExecutionsTable2DEF886FD1665DC2"
+                        },
+                        "DATA_LAKE_BUCKET_NAME": {
+                          "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputRefDataLakeBucket0256EA8EA38B2E65"
+                        },
+                        "CRITICAL_ALERTS_TOPIC_ARN": {
+                          "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE"
+                        },
+                        "WARNING_ALERTS_TOPIC_ARN": {
+                          "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D"
+                        }
+                      }
+                    },
+                    "handler": "handler.handler",
+                    "memorySize": 256,
+                    "role": {
+                      "Fn::GetAtt": [
+                        "PipelineOrchestrationHandlerServiceRole5F87C487",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.12",
+                    "timeout": 60
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.120.0"
+            }
+          },
+          "ValidateContract": {
+            "id": "ValidateContract",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/ValidateContract",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.120.0"
+            }
+          },
+          "ConfigureGlueConnector": {
+            "id": "ConfigureGlueConnector",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/ConfigureGlueConnector",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.120.0"
+            }
+          },
+          "ProvisionSFTP": {
+            "id": "ProvisionSFTP",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/ProvisionSFTP",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.120.0"
+            }
+          },
+          "ConfigureAIProcessing": {
+            "id": "ConfigureAIProcessing",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/ConfigureAIProcessing",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.120.0"
+            }
+          },
+          "CreateETLJob": {
+            "id": "CreateETLJob",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/CreateETLJob",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.120.0"
+            }
+          },
+          "HandleError": {
+            "id": "HandleError",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/HandleError",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.120.0"
+            }
+          },
+          "DeploymentFailed": {
+            "id": "DeploymentFailed",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/DeploymentFailed",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Fail",
+              "version": "2.120.0"
+            }
+          },
+          "DeploymentSucceeded": {
+            "id": "DeploymentSucceeded",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/DeploymentSucceeded",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Succeed",
+              "version": "2.120.0"
+            }
+          },
+          "DeterminePattern": {
+            "id": "DeterminePattern",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/DeterminePattern",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Choice",
+              "version": "2.120.0"
+            }
+          },
+          "PipelineDeploymentStateMachine": {
+            "id": "PipelineDeploymentStateMachine",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine",
+            "children": {
+              "Role": {
+                "id": "Role",
+                "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role",
+                "children": {
+                  "ImportRole": {
+                    "id": "ImportRole",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/ImportRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "states.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "logs:CreateLogDelivery",
+                                    "logs:DeleteLogDelivery",
+                                    "logs:DescribeLogGroups",
+                                    "logs:DescribeResourcePolicies",
+                                    "logs:GetLogDelivery",
+                                    "logs:ListLogDeliveries",
+                                    "logs:PutResourcePolicy",
+                                    "logs:UpdateLogDelivery",
+                                    "xray:GetSamplingRules",
+                                    "xray:GetSamplingTargets",
+                                    "xray:PutTelemetryRecords",
+                                    "xray:PutTraceSegments"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": "lambda:InvokeFunction",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "PipelineOrchestrationHandler829F9113",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "PipelineOrchestrationHandler829F9113",
+                                              "Arn"
+                                            ]
+                                          },
+                                          ":*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "PipelineDeploymentStateMachineRoleDefaultPolicy7C292ADC",
+                            "roles": [
+                              {
+                                "Ref": "PipelineDeploymentStateMachineRoleB55834B1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.120.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.120.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::StepFunctions::StateMachine",
+                  "aws:cdk:cloudformation:props": {
+                    "definitionString": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{\"StartAt\":\"ValidateContract\",\"States\":{\"ValidateContract\":{\"Next\":\"DeterminePattern\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.taskResult\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "PipelineOrchestrationHandler829F9113",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload\":{\"task\":\"validate_contract\",\"contractId.$\":\"$.contractId\",\"cmoId.$\":\"$.cmoId\",\"dataDomain.$\":\"$.dataDomain\",\"integrationPattern.$\":\"$.integrationPattern\",\"status.$\":\"$.status\",\"qualityRules.$\":\"$.qualityRules\",\"connectionConfig.$\":\"$.connectionConfig\",\"aiConfig.$\":\"$.aiConfig\",\"deliverySchedule.$\":\"$.deliverySchedule\"}}},\"DeterminePattern\":{\"Type\":\"Choice\",\"Choices\":[{\"Variable\":\"$.taskResult.Payload.integrationPattern\",\"StringEquals\":\"native-connector\",\"Next\":\"ConfigureGlueConnector\"},{\"Variable\":\"$.taskResult.Payload.integrationPattern\",\"StringEquals\":\"secure-transfer\",\"Next\":\"ProvisionSFTP\"},{\"Variable\":\"$.taskResult.Payload.integrationPattern\",\"StringEquals\":\"ai-unstructured\",\"Next\":\"ConfigureAIProcessing\"}],\"Default\":\"DeploymentFailed\"},\"DeploymentFailed\":{\"Type\":\"Fail\",\"Error\":\"PipelineDeploymentError\",\"Cause\":\"Pipeline deployment failed after retries\"},\"ConfigureGlueConnector\":{\"Next\":\"CreateETLJob\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.patternResult\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "PipelineOrchestrationHandler829F9113",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload\":{\"task\":\"configure_glue_connector\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"connectionConfig.$\":\"$.taskResult.Payload.connectionConfig\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"CreateETLJob\":{\"Next\":\"DeploymentSucceeded\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.etlResult\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "PipelineOrchestrationHandler829F9113",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload\":{\"task\":\"create_etl_job\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"ProvisionSFTP\":{\"Next\":\"CreateETLJob\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.patternResult\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "PipelineOrchestrationHandler829F9113",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload\":{\"task\":\"provision_sftp\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"ConfigureAIProcessing\":{\"Next\":\"CreateETLJob\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.patternResult\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "PipelineOrchestrationHandler829F9113",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload\":{\"task\":\"configure_ai_processing\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"DeploymentSucceeded\":{\"Type\":\"Succeed\"}},\"TimeoutSeconds\":1800}"
+                        ]
+                      ]
+                    },
+                    "loggingConfiguration": {
+                      "destinations": [
+                        {
+                          "cloudWatchLogsLogGroup": {
+                            "logGroupArn": {
+                              "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputFnGetAttPipelineLogGroup1CF6DEF2Arn61F280E7"
+                            }
+                          }
+                        }
+                      ],
+                      "level": "ALL"
+                    },
+                    "roleArn": {
+                      "Fn::GetAtt": [
+                        "PipelineDeploymentStateMachineRoleB55834B1",
+                        "Arn"
+                      ]
+                    },
+                    "stateMachineName": "PipelineDeploymentWorkflow",
+                    "tracingConfiguration": {
+                      "enabled": true
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_stepfunctions.CfnStateMachine",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.StateMachine",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangePipelineOrchestrationStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangePipelineOrchestrationStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangeSecurityStack": {
+        "id": "PharmaDataExchangeSecurityStack",
+        "path": "PharmaDataExchangeSecurityStack",
+        "children": {
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeSecurityStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeSecurityStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeSecurityStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeSecurityStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "PharmaDataExchangeAuditComplianceStack": {
+        "id": "PharmaDataExchangeAuditComplianceStack",
+        "path": "PharmaDataExchangeAuditComplianceStack",
+        "children": {
+          "AuditKMSKey": {
+            "id": "AuditKMSKey",
+            "path": "PharmaDataExchangeAuditComplianceStack/AuditKMSKey",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeAuditComplianceStack/AuditKMSKey/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Key",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "KMS key for CloudTrail audit log encryption",
+                    "enableKeyRotation": true,
+                    "keyPolicy": {
+                      "Statement": [
+                        {
+                          "Action": "kms:*",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::550129454303:root"
+                          },
+                          "Resource": "*"
+                        },
+                        {
+                          "Action": [
+                            "kms:DescribeKey",
+                            "kms:GenerateDataKey*"
+                          ],
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "cloudtrail.amazonaws.com"
+                          },
+                          "Resource": "*",
+                          "Sid": "AllowCloudTrailEncrypt"
+                        },
+                        {
+                          "Action": [
+                            "kms:Decrypt*",
+                            "kms:DescribeKey",
+                            "kms:Encrypt*",
+                            "kms:GenerateDataKey*",
+                            "kms:ReEncrypt*"
+                          ],
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "logs.us-east-1.amazonaws.com"
+                          },
+                          "Resource": "*",
+                          "Sid": "AllowCloudWatchLogsEncrypt"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnKey",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Key",
+              "version": "2.120.0"
+            }
+          },
+          "AuditTrailBucket": {
+            "id": "AuditTrailBucket",
+            "path": "PharmaDataExchangeAuditComplianceStack/AuditTrailBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeAuditComplianceStack/AuditTrailBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "AuditKMSKeyEFEBA47A",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "expirationInDays": 2555,
+                          "id": "audit-trail-retention",
+                          "status": "Enabled"
+                        }
+                      ]
+                    },
+                    "objectLockConfiguration": {
+                      "objectLockEnabled": "Enabled",
+                      "rule": {
+                        "defaultRetention": {
+                          "days": 2555,
+                          "mode": "GOVERNANCE"
+                        }
+                      }
+                    },
+                    "objectLockEnabled": true,
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.120.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "PharmaDataExchangeAuditComplianceStack/AuditTrailBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeAuditComplianceStack/AuditTrailBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "AuditTrailBucket677225EC"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "AuditTrailBucket677225EC",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "AuditTrailBucket677225EC",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Action": "s3:GetBucketAcl",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "cloudtrail.amazonaws.com"
+                              },
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "AuditTrailBucket677225EC",
+                                  "Arn"
+                                ]
+                              },
+                              "Sid": "AllowCloudTrailGetBucketAcl"
+                            },
+                            {
+                              "Action": "s3:PutObject",
+                              "Condition": {
+                                "StringEquals": {
+                                  "s3:x-amz-acl": "bucket-owner-full-control"
+                                }
+                              },
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "cloudtrail.amazonaws.com"
+                              },
+                              "Resource": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "AuditTrailBucket677225EC",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "/*"
+                                  ]
+                                ]
+                              },
+                              "Sid": "AllowCloudTrailPutObject"
+                            },
+                            {
+                              "Action": "s3:GetBucketAcl",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "cloudtrail.amazonaws.com"
+                              },
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "AuditTrailBucket677225EC",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": "s3:PutObject",
+                              "Condition": {
+                                "StringEquals": {
+                                  "s3:x-amz-acl": "bucket-owner-full-control"
+                                }
+                              },
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "cloudtrail.amazonaws.com"
+                              },
+                              "Resource": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "AuditTrailBucket677225EC",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "/AWSLogs/550129454303/*"
+                                  ]
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.120.0"
+            }
+          },
+          "CloudTrailLogGroup": {
+            "id": "CloudTrailLogGroup",
+            "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/pharma-data-exchange/cloudtrail",
+                    "retentionInDays": 2557
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.120.0"
+            }
+          },
+          "CloudTrailLogsRole": {
+            "id": "CloudTrailLogsRole",
+            "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole",
+            "children": {
+              "ImportCloudTrailLogsRole": {
+                "id": "ImportCloudTrailLogsRole",
+                "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole/ImportCloudTrailLogsRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.120.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "cloudtrail.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "description": "Allows CloudTrail to send logs to CloudWatch Logs"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.120.0"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeAuditComplianceStack/CloudTrailLogsRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "CloudTrailLogGroup343A29D6",
+                                  "Arn"
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "CloudTrailLogsRoleDefaultPolicy50A4B1EC",
+                        "roles": [
+                          {
+                            "Ref": "CloudTrailLogsRoleF52E25E9"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.120.0"
+            }
+          },
+          "AuditTrail": {
+            "id": "AuditTrail",
+            "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail",
+            "children": {
+              "LogsRole": {
+                "id": "LogsRole",
+                "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole",
+                "children": {
+                  "ImportLogsRole": {
+                    "id": "ImportLogsRole",
+                    "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole/ImportLogsRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "cloudtrail.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.120.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail/LogsRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "logs:CreateLogStream",
+                                    "logs:PutLogEvents"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::GetAtt": [
+                                      "CloudTrailLogGroup343A29D6",
+                                      "Arn"
+                                    ]
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "AuditTrailLogsRoleDefaultPolicyF057B068",
+                            "roles": [
+                              {
+                                "Ref": "AuditTrailLogsRole4829C622"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.120.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.120.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.120.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "PharmaDataExchangeAuditComplianceStack/AuditTrail/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudTrail::Trail",
+                  "aws:cdk:cloudformation:props": {
+                    "cloudWatchLogsLogGroupArn": {
+                      "Fn::GetAtt": [
+                        "CloudTrailLogGroup343A29D6",
+                        "Arn"
+                      ]
+                    },
+                    "cloudWatchLogsRoleArn": {
+                      "Fn::GetAtt": [
+                        "AuditTrailLogsRole4829C622",
+                        "Arn"
+                      ]
+                    },
+                    "enableLogFileValidation": true,
+                    "eventSelectors": [
+                      {
+                        "dataResources": [
+                          {
+                            "type": "AWS::S3::Object",
+                            "values": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeBucket0256EA8EArn1F6EDADC"
+                                    },
+                                    "/"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "includeManagementEvents": true,
+                        "readWriteType": "All"
+                      }
+                    ],
+                    "includeGlobalServiceEvents": true,
+                    "isLogging": true,
+                    "isMultiRegionTrail": true,
+                    "kmsKeyId": {
+                      "Fn::GetAtt": [
+                        "AuditKMSKeyEFEBA47A",
+                        "Arn"
+                      ]
+                    },
+                    "s3BucketName": {
+                      "Ref": "AuditTrailBucket677225EC"
+                    },
+                    "trailName": "pharma-data-exchange-audit-trail"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudtrail.CfnTrail",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudtrail.Trail",
+              "version": "2.120.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "PharmaDataExchangeAuditComplianceStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PharmaDataExchangeAuditComplianceStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.120.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.4"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PharmaDataExchangeAuditComplianceStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.120.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PharmaDataExchangeAuditComplianceStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.120.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.120.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.4.4"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.120.0"
+    }
+  }
+}

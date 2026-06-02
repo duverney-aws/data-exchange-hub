@@ -1,0 +1,440 @@
+{
+ "Resources": {
+  "PipelineOrchestrationHandlerServiceRole5F87C487": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/Resource"
+   }
+  },
+  "PipelineOrchestrationHandlerServiceRoleDefaultPolicy5CE0C4AC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttPipelineExecutionsTable2DEF886FArn3CFA2C9F"
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeBucket0256EA8EArn1F6EDADC"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeBucket0256EA8EArn1F6EDADC"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputFnGetAttDataLakeKMSKey52176C82Arn9D25A7BB"
+       }
+      },
+      {
+       "Action": "sns:Publish",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE"
+        },
+        {
+         "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PipelineOrchestrationHandlerServiceRoleDefaultPolicy5CE0C4AC",
+    "Roles": [
+     {
+      "Ref": "PipelineOrchestrationHandlerServiceRole5F87C487"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "PipelineOrchestrationHandler829F9113": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-550129454303-us-east-1",
+     "S3Key": "230554bf147492db9128ceb3c52e5203ef1d2da631ae05acaf54b7879829d192.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CONTRACTS_TABLE_NAME": {
+       "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96"
+      },
+      "EXECUTIONS_TABLE_NAME": {
+       "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputRefPipelineExecutionsTable2DEF886FD1665DC2"
+      },
+      "DATA_LAKE_BUCKET_NAME": {
+       "Fn::ImportValue": "PharmaDataExchangeDataLakeStack:ExportsOutputRefDataLakeBucket0256EA8EA38B2E65"
+      },
+      "CRITICAL_ALERTS_TOPIC_ARN": {
+       "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE"
+      },
+      "WARNING_ALERTS_TOPIC_ARN": {
+       "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D"
+      }
+     }
+    },
+    "Handler": "handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "PipelineOrchestrationHandlerServiceRole5F87C487",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "PipelineOrchestrationHandlerServiceRoleDefaultPolicy5CE0C4AC",
+    "PipelineOrchestrationHandlerServiceRole5F87C487"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/PipelineOrchestrationHandler/Resource",
+    "aws:asset:path": "asset.230554bf147492db9128ceb3c52e5203ef1d2da631ae05acaf54b7879829d192",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PipelineDeploymentStateMachineRoleB55834B1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/Resource"
+   }
+  },
+  "PipelineDeploymentStateMachineRoleDefaultPolicy7C292ADC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogDelivery",
+        "logs:DeleteLogDelivery",
+        "logs:DescribeLogGroups",
+        "logs:DescribeResourcePolicies",
+        "logs:GetLogDelivery",
+        "logs:ListLogDeliveries",
+        "logs:PutResourcePolicy",
+        "logs:UpdateLogDelivery",
+        "xray:GetSamplingRules",
+        "xray:GetSamplingTargets",
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PipelineOrchestrationHandler829F9113",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PipelineOrchestrationHandler829F9113",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PipelineDeploymentStateMachineRoleDefaultPolicy7C292ADC",
+    "Roles": [
+     {
+      "Ref": "PipelineDeploymentStateMachineRoleB55834B1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Role/DefaultPolicy/Resource"
+   }
+  },
+  "PipelineDeploymentStateMachine80816A36": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"StartAt\":\"ValidateContract\",\"States\":{\"ValidateContract\":{\"Next\":\"DeterminePattern\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.taskResult\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "PipelineOrchestrationHandler829F9113",
+         "Arn"
+        ]
+       },
+       "\",\"Payload\":{\"task\":\"validate_contract\",\"contractId.$\":\"$.contractId\",\"cmoId.$\":\"$.cmoId\",\"dataDomain.$\":\"$.dataDomain\",\"integrationPattern.$\":\"$.integrationPattern\",\"status.$\":\"$.status\",\"qualityRules.$\":\"$.qualityRules\",\"connectionConfig.$\":\"$.connectionConfig\",\"aiConfig.$\":\"$.aiConfig\",\"deliverySchedule.$\":\"$.deliverySchedule\"}}},\"DeterminePattern\":{\"Type\":\"Choice\",\"Choices\":[{\"Variable\":\"$.taskResult.Payload.integrationPattern\",\"StringEquals\":\"native-connector\",\"Next\":\"ConfigureGlueConnector\"},{\"Variable\":\"$.taskResult.Payload.integrationPattern\",\"StringEquals\":\"secure-transfer\",\"Next\":\"ProvisionSFTP\"},{\"Variable\":\"$.taskResult.Payload.integrationPattern\",\"StringEquals\":\"ai-unstructured\",\"Next\":\"ConfigureAIProcessing\"}],\"Default\":\"DeploymentFailed\"},\"DeploymentFailed\":{\"Type\":\"Fail\",\"Error\":\"PipelineDeploymentError\",\"Cause\":\"Pipeline deployment failed after retries\"},\"ConfigureGlueConnector\":{\"Next\":\"CreateETLJob\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.patternResult\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "PipelineOrchestrationHandler829F9113",
+         "Arn"
+        ]
+       },
+       "\",\"Payload\":{\"task\":\"configure_glue_connector\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"connectionConfig.$\":\"$.taskResult.Payload.connectionConfig\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"CreateETLJob\":{\"Next\":\"DeploymentSucceeded\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.etlResult\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "PipelineOrchestrationHandler829F9113",
+         "Arn"
+        ]
+       },
+       "\",\"Payload\":{\"task\":\"create_etl_job\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"ProvisionSFTP\":{\"Next\":\"CreateETLJob\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.patternResult\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "PipelineOrchestrationHandler829F9113",
+         "Arn"
+        ]
+       },
+       "\",\"Payload\":{\"task\":\"provision_sftp\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"ConfigureAIProcessing\":{\"Next\":\"CreateETLJob\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2},{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":1,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Type\":\"Task\",\"ResultPath\":\"$.patternResult\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "PipelineOrchestrationHandler829F9113",
+         "Arn"
+        ]
+       },
+       "\",\"Payload\":{\"task\":\"configure_ai_processing\",\"contractId.$\":\"$.taskResult.Payload.contractId\",\"cmoId.$\":\"$.taskResult.Payload.cmoId\",\"dataDomain.$\":\"$.taskResult.Payload.dataDomain\",\"integrationPattern.$\":\"$.taskResult.Payload.integrationPattern\",\"qualityRules.$\":\"$.taskResult.Payload.qualityRules\",\"deliverySchedule.$\":\"$.taskResult.Payload.deliverySchedule\",\"status.$\":\"$.taskResult.Payload.status\"}}},\"DeploymentSucceeded\":{\"Type\":\"Succeed\"}},\"TimeoutSeconds\":1800}"
+      ]
+     ]
+    },
+    "LoggingConfiguration": {
+     "Destinations": [
+      {
+       "CloudWatchLogsLogGroup": {
+        "LogGroupArn": {
+         "Fn::ImportValue": "PharmaDataExchangeMonitoringStack:ExportsOutputFnGetAttPipelineLogGroup1CF6DEF2Arn61F280E7"
+        }
+       }
+      }
+     ],
+     "Level": "ALL"
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "PipelineDeploymentStateMachineRoleB55834B1",
+      "Arn"
+     ]
+    },
+    "StateMachineName": "PipelineDeploymentWorkflow",
+    "TracingConfiguration": {
+     "Enabled": true
+    }
+   },
+   "DependsOn": [
+    "PipelineDeploymentStateMachineRoleDefaultPolicy7C292ADC",
+    "PipelineDeploymentStateMachineRoleB55834B1"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/PipelineDeploymentStateMachine/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12OUWrDQAxEz5J/WU3sEySBQKGFYB/AKGslVr3eLZGcEMzevXiTQunXm5GEZkrclGtcr+iuheuGwssJ58bIDUB3bWdP46kjnA9TcCYxwP4cfnUCoRHnOnpexpnH6MU9FvtUCbRqSZVNcbsAtMLd5Aa2HSmDGn+fX/+0NdJB8SNnvodbHP4d4Hwg8dBMzjF3sO+jOIbGyPiTXC8hF/nrU4KaNU5Xx5DzG6OLhEsu/FokOD6sj+Gtwk2F5epLRYrrFExGxvrJH2kRAswoAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangePipelineOrchestrationStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

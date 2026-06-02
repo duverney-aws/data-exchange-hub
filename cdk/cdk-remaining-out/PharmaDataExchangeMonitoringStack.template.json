@@ -1,0 +1,382 @@
+{
+ "Resources": {
+  "APILogGroup566E111F": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/pharma-data-exchange/api",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/APILogGroup/Resource"
+   }
+  },
+  "PipelineLogGroup1CF6DEF2": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/pharma-data-exchange/pipeline",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/PipelineLogGroup/Resource"
+   }
+  },
+  "ETLLogGroupE6B6AA8A": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/pharma-data-exchange/etl",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/ETLLogGroup/Resource"
+   }
+  },
+  "SchemaRegistryLogGroup75202152": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/pharma-data-exchange/schema-registry",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/SchemaRegistryLogGroup/Resource"
+   }
+  },
+  "AIProcessingLogGroupA4047BD2": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/pharma-data-exchange/ai-processing",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/AIProcessingLogGroup/Resource"
+   }
+  },
+  "CriticalAlertsTopicF16F2E77": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "Critical Alerts for Pharma Data Exchange Hub",
+    "TopicName": "pharma-data-exchange-critical-alerts"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/CriticalAlertsTopic/Resource"
+   }
+  },
+  "WarningAlertsTopic278F5B4C": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "Warning Alerts for Pharma Data Exchange Hub",
+    "TopicName": "pharma-data-exchange-warning-alerts"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/WarningAlertsTopic/Resource"
+   }
+  },
+  "SLABreachTopicF23C37EB": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "SLA Breach Notifications",
+    "TopicName": "pharma-data-exchange-sla-breach"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/SLABreachTopic/Resource"
+   }
+  },
+  "MainDashboard5197298C": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# Pharma Data Exchange Hub - Operational Dashboard\\n\\nMonitor CMO data pipelines, quality metrics, and SLA compliance.\"}},{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":2,\"properties\":{\"markdown\":\"## SLA Compliance\\n\\nExecution time, quality scores, availability, and success rate per CMO.\"}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":4,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Execution Time\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"CMO/DataPipeline\",\"ExecutionTime\",\"CMOId\",\"ALL\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":4,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Quality Score\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"CMO/DataPipeline\",\"QualityScore\",\"CMOId\",\"ALL\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":10,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Availability Percent\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"CMO/DataPipeline\",\"AvailabilityPercent\",\"CMOId\",\"ALL\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":10,\"properties\":{\"view\":\"singleValue\",\"title\":\"Success Rate\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"CMO/DataPipeline\",\"SuccessRate\",\"CMOId\",\"ALL\"]]}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "PharmaDataExchangeHub"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/MainDashboard/Resource"
+   }
+  },
+  "ExecutionTimeWarningAlarm372FB096": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "WarningAlertsTopic278F5B4C"
+     }
+    ],
+    "AlarmDescription": "ExecutionTime exceeded 80% of SLA (2880s of 3600s max)",
+    "AlarmName": "SLA-ExecutionTime-Warning",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "CMOId",
+      "Value": "ALL"
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "ExecutionTime",
+    "Namespace": "CMO/DataPipeline",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 2880,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/ExecutionTimeWarningAlarm/Resource"
+   }
+  },
+  "ExecutionTimeCriticalAlarmA8CDFD87": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "CriticalAlertsTopicF16F2E77"
+     },
+     {
+      "Ref": "SLABreachTopicF23C37EB"
+     }
+    ],
+    "AlarmDescription": "ExecutionTime exceeded 100% of SLA (3600s max)",
+    "AlarmName": "SLA-ExecutionTime-Critical",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "CMOId",
+      "Value": "ALL"
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "ExecutionTime",
+    "Namespace": "CMO/DataPipeline",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 3600,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/ExecutionTimeCriticalAlarm/Resource"
+   }
+  },
+  "QualityScoreWarningAlarm7E6FD815": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "WarningAlertsTopic278F5B4C"
+     }
+    ],
+    "AlarmDescription": "QualityScore dropped below warning threshold (95%)",
+    "AlarmName": "SLA-QualityScore-Warning",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "CMOId",
+      "Value": "ALL"
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "QualityScore",
+    "Namespace": "CMO/DataPipeline",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 95,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/QualityScoreWarningAlarm/Resource"
+   }
+  },
+  "QualityScoreCriticalAlarm200486CC": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "CriticalAlertsTopicF16F2E77"
+     },
+     {
+      "Ref": "SLABreachTopicF23C37EB"
+     }
+    ],
+    "AlarmDescription": "QualityScore dropped below critical threshold (90%)",
+    "AlarmName": "SLA-QualityScore-Critical",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "CMOId",
+      "Value": "ALL"
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "QualityScore",
+    "Namespace": "CMO/DataPipeline",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 90,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/QualityScoreCriticalAlarm/Resource"
+   }
+  },
+  "SuccessRateWarningAlarm43B8AC13": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "WarningAlertsTopic278F5B4C"
+     }
+    ],
+    "AlarmDescription": "SuccessRate dropped below warning threshold (99%)",
+    "AlarmName": "SLA-SuccessRate-Warning",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "CMOId",
+      "Value": "ALL"
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "SuccessRate",
+    "Namespace": "CMO/DataPipeline",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 99,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/SuccessRateWarningAlarm/Resource"
+   }
+  },
+  "SuccessRateCriticalAlarm87E585C1": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "CriticalAlertsTopicF16F2E77"
+     },
+     {
+      "Ref": "SLABreachTopicF23C37EB"
+     }
+    ],
+    "AlarmDescription": "SuccessRate dropped below critical threshold (95%)",
+    "AlarmName": "SLA-SuccessRate-Critical",
+    "ComparisonOperator": "LessThanThreshold",
+    "Dimensions": [
+     {
+      "Name": "CMOId",
+      "Value": "ALL"
+     }
+    ],
+    "EvaluationPeriods": 3,
+    "MetricName": "SuccessRate",
+    "Namespace": "CMO/DataPipeline",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 95,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/SuccessRateCriticalAlarm/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0XJzQ6CMBAE4GfhXlZ+nsBo4sWDAe9mKQiV0iXdNsQ0fXdTjPE038xUUFYFFBlunMt+zrXqILQO5Sxw40fQNDKEK40XS34Vp6f5OQo2DOFOq5Jp3xGF1OT7DZ2cIJyRp47Q9un/l6NGu6RpR4yJzcDkrRyiuL3dROZQQ1lDlb1Yqdx649QyQPPND+3rKlK0AAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeMonitoringStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE": {
+   "Value": {
+    "Ref": "CriticalAlertsTopicF16F2E77"
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeMonitoringStack:ExportsOutputRefCriticalAlertsTopicF16F2E77984FC1BE"
+   }
+  },
+  "ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D": {
+   "Value": {
+    "Ref": "WarningAlertsTopic278F5B4C"
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeMonitoringStack:ExportsOutputRefWarningAlertsTopic278F5B4C01837E7D"
+   }
+  },
+  "ExportsOutputFnGetAttPipelineLogGroup1CF6DEF2Arn61F280E7": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PipelineLogGroup1CF6DEF2",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "PharmaDataExchangeMonitoringStack:ExportsOutputFnGetAttPipelineLogGroup1CF6DEF2Arn61F280E7"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

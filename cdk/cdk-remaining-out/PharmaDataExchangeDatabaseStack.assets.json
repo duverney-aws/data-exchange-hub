@@ -1,0 +1,20 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "07186e73b6072f2fa1205badeda8a43b8a231aa47d8bd5ae600f1167a019781d": {
+      "source": {
+        "path": "PharmaDataExchangeDatabaseStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "550129454303-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-550129454303-us-east-1",
+          "objectKey": "07186e73b6072f2fa1205badeda8a43b8a231aa47d8bd5ae600f1167a019781d.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-file-publishing-role-550129454303-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

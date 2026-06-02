@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Data Exchange Hub - Enterprise Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #232F3E 0%, #131A22 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: #fff;
+            color: #232F3E;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 60px;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-header {
+            border-bottom: 4px solid #FF9900;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .slide-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #232F3E;
+            margin-bottom: 10px;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.3em;
+            color: #FF9900;
+        }
+        
+        .slide-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+        
+        .slide-content h3 {
+            color: #FF9900;
+            margin: 25px 0 15px 0;
+            font-size: 1.5em;
+        }
+        
+        .slide-content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .slide-content li {
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #232F3E;
+            color: #00FF00;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 20px 0;
+            white-space: pre;
+        }
+        
+        .highlight-box {
+            background: #FFF3CD;
+            border-left: 5px solid #FF9900;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .architecture-diagram {
+            background: #F8F9FA;
+            border: 2px solid #232F3E;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #232F3E;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .nav-button {
+            background: #FF9900;
+            color: #232F3E;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .nav-button:hover {
+            background: #EC7211;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,153,0,0.3);
+        }
+        
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(35, 47, 62, 0.9);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+        
+        .aws-logo {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FF9900;
+            z-index: 1000;
+        }
+        
+        .key-point {
+            background: #E8F4F8;
+            border-left: 5px solid #0073BB;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .metric-box {
+            display: inline-block;
+            background: #232F3E;
+            color: #FF9900;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .metric-label {
+            font-size: 1em;
+            color: #fff;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="aws-logo">AWS</div>
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">15</span>
+    </div>
+    
+    <div class="presentation">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <h1 class="slide-title">Pharma Data Exchange Hub</h1>
+                <p class="slide-subtitle">Technical Architecture & Implementation Strategy</p>
+            </div>
+            <div class="slide-content">
+                <h3>Enterprise Architecture Presentation</h3>
+                <p style="font-size: 1.3em; margin: 40px 0;">Presented by: AWS Solutions Architecture Team</p>
+                <p style="font-size: 1.2em; margin: 20px 0;">Date: February 2026</p>
+                
+                <div class="highlight-box" style="margin-top: 60px;">
+                    <h3 style="margin-top: 0;">Focus Areas</h3>
+                    <ul>
+                        <li>Self-service CMO onboarding (30 minutes vs 3-6 months)</li>
+                        <li>Data contracts & schema registry</li>
+                        <li>Automated pipeline activation</li>
+                        <li>Architecture patterns & scalability</li>
+                        <li>Security & compliance (GxP-ready)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Real Challenge -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">The Real Challenge</h1>
+                <p class="slide-subtitle">Data Movement, Not Integration</p>
+            </div>
+            <div class="slide-content">
+                <div class="key-point">
+                    <h3 style="margin-top: 0;">Customer Insight</h3>
+                    <p style="font-size: 1.2em; font-style: italic;">
+                        "The biggest challenge is not technical integration complexity, but 
+                        <strong>how to move data from CMOs to Merck efficiently and consistently</strong>."
+                    </p>
+                </div>
+
+                <h3>Traditional Approach (What We're Avoiding)</h3>
+                <div class="architecture-diagram">
+CMO contacts Merck → Merck IT creates custom integration → 3-6 months
+                </div>
+
+                <h3>Our Approach (Self-Service)</h3>
+                <div class="architecture-diagram">
+CMO receives URL → Self-service onboarding → Schema registration → 
+Merck approves → Pipeline auto-deployed → CMO publishes data → &lt; 1 week
+                </div>
+
+                <h3>Core Components</h3>
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Purpose</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Contracts</strong></td>
+                        <td>Formal agreement: schema, quality, SLAs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Schema Registry</strong></td>
+                        <td>Centralized, versioned schemas</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Onboarding Portal</strong></td>
+                        <td>CMO self-service registration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auto Pipeline</strong></td>
+                        <td>Deploy in &lt; 5 minutes</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 3: Self-Service Onboarding -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Self-Service CMO Onboarding</h1>
+                <p class="slide-subtitle">30 Minutes vs 3-6 Months</p>
+            </div>
+            <div class="slide-content">
+                <h3>Onboarding Flow</h3>
+                
+                <div class="key-point">
+                    <strong>Step 1: CMO Receives Invitation</strong>
+                    <p>Email with URL: https://cmo-onboarding.merck.com/register</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Step 2: Self-Service Registration (15 min)</strong>
+                    <ul>
+                        <li>Basic info: CMO name, contact, authentication</li>
+                        <li>Pattern selection: Choose Pattern 1, 2, or 3</li>
+                        <li>Schema definition: Upload sample OR select template</li>
+                        <li>Field mapping: CMO fields → Canonical model</li>
+                        <li>Connection config: Auto-generated credentials</li>
+                    </ul>
+                </div>
+
+                <div class="key-point">
+                    <strong>Step 3: Test & Validate (10 min)</strong>
+                    <p>Upload test data → Real-time validation → Quality score</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Step 4: Merck Approval (5 min)</strong>
+                    <p>Review data contract → One-click approval</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Step 5: Auto Pipeline Activation (&lt; 5 min)</strong>
+                    <p>Step Functions deploys: S3 prefix, schema registry, Glue job, monitoring</p>
+                </div>
+
+                <div class="metric-box">
+                    <span class="metric-value">35 min</span>
+                    <span class="metric-label">Total Time</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">90%</span>
+                    <span class="metric-label">Time Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Data Contracts -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Data Contract Architecture</h1>
+                <p class="slide-subtitle">Formal Agreements for Data Movement</p>
+            </div>
+            <div class="slide-content">
+                <h3>What is a Data Contract?</h3>
+                <p>A formal, machine-readable agreement between CMO (producer) and Merck (consumer)</p>
+
+                <h3>Example Data Contract (YAML)</h3>
+                <div class="code-block">data_contract:
+  version: "1.0"
+  cmo_id: "cmo-alpha"
+  data_domain: "batch-manufacturing"
+  
+  schema:
+    fields:
+      - name: batch_id
+        type: string
+        required: true
+        unique: true
+      - name: yield_percentage
+        type: decimal
+        min: 0
+        max: 100
+  
+  data_quality:
+    completeness: 100%
+    uniqueness: [batch_id]
+    timeliness: "< 24 hours"
+  
+  delivery:
+    frequency: "daily"
+    schedule: "02:00 UTC"
+    format: "parquet"
+  
+  mapping:
+    lot_number: batch_id
+    yield_pct: yield_percentage</div>
+
+                <h3>Benefits</h3>
+                <ul>
+                    <li><strong>Clarity:</strong> Both parties know expectations</li>
+                    <li><strong>Automation:</strong> Machine-readable enables validation</li>
+                    <li><strong>Versioning:</strong> Track changes over time</li>
+                    <li><strong>Governance:</strong> Centralized repository</li>
+                    <li><strong>Accountability:</strong> SLAs define success</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Schema Registry -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Schema Registry & Validation</h1>
+                <p class="slide-subtitle">AWS Glue Schema Registry</p>
+            </div>
+            <div class="slide-content">
+                <h3>Centralized Schema Management</h3>
+                <div class="architecture-diagram">
+GLUE SCHEMA REGISTRY
+├── batch-manufacturing
+│   ├── v1.0 (2024-01-15) - Initial
+│   ├── v1.1 (2024-03-20) - Added yield_percentage
+│   └── v2.0 (2024-06-10) - Breaking change
+├── quality-control
+│   ├── v1.0 (2024-01-15) - Initial
+│   └── v1.1 (2024-04-01) - Added test_method
+└── materials
+    └── v1.0 (2024-01-15) - Initial
+                </div>
+
+                <h3>Validation Flow</h3>
+                <ol>
+                    <li>Data arrives in Bronze layer</li>
+                    <li>Lambda retrieves schema from registry</li>
+                    <li>Validates structure, types, constraints</li>
+                    <li>Applies data quality rules from contract</li>
+                    <li>Calculates quality score (0-100)</li>
+                    <li>If valid (>95%) → Silver layer</li>
+                    <li>If invalid (<95%) → Quarantine + alert CMO</li>
+                </ol>
+
+                <h3>Schema Evolution</h3>
+                <table>
+                    <tr>
+                        <th>Change Type</th>
+                        <th>Version</th>
+                        <th>Compatible?</th>
+                    </tr>
+                    <tr>
+                        <td>Add optional field</td>
+                        <td>Minor (1.0 → 1.1)</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Add required field</td>
+                        <td>Major (1.0 → 2.0)</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Rename field</td>
+                        <td>Major (1.0 → 2.0)</td>
+                        <td>No</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 6: Solution Architecture -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Solution Architecture</h1>
+                <p class="slide-subtitle">Hub-and-Spoke with Canonical Data Model</p>
+            </div>
+            <div class="slide-content">
+                <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────┐
+│              CMO ECOSYSTEM (Spokes)                     │
+│  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐     │
+│  │CMO A │  │CMO B │  │CMO C │  │CMO D │  │CMO E │     │
+│  │Snowfk│  │Oracle│  │ SAP  │  │Legacy│  │SFTP  │     │
+│  └──┬───┘  └──┬───┘  └──┬───┘  └──┬───┘  └──┬───┘     │
+│     └─────────┴─────────┴─────────┴─────────┘          │
+│                         │                               │
+└─────────────────────────┼───────────────────────────────┘
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│           INTEGRATION HUB (AWS)                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ INGESTION: Glue, Transfer Family, AI Services    │  │
+│  └───────────────────────────────────────────────────┘  │
+│                         ▼                               │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ DATA LAKE: Bronze → Silver → Gold                │  │
+│  └───────────────────────────────────────────────────┘  │
+│                         ▼                               │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ PROCESSING: Glue ETL, Athena, Bedrock            │  │
+│  └───────────────────────────────────────────────────┘  │
+│                         ▼                               │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ GOVERNANCE: Lake Formation, Data Catalog, KMS    │  │
+│  └───────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│         MERCK SYSTEMS (Consumers)                       │
+│  ERP | QMS | LIMS | Data Warehouse | BI Tools          │
+└─────────────────────────────────────────────────────────┘
+                </div>
+
+                <h3>Architecture Principles</h3>
+                <ul>
+                    <li><strong>Decoupled:</strong> Hub isolates CMOs from Merck systems</li>
+                    <li><strong>Canonical model:</strong> Consistent regardless of source</li>
+                    <li><strong>Multi-tenancy:</strong> Isolated per CMO, shared infrastructure</li>
+                    <li><strong>Event-driven:</strong> Real-time and batch processing</li>
+                    <li><strong>Immutable:</strong> Bronze layer preserves audit trail</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Three Integration Patterns -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Three Integration Patterns</h1>
+                <p class="slide-subtitle">100% CMO Coverage</p>
+            </div>
+            <div class="slide-content">
+                <table>
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Best For</th>
+                        <th>Time</th>
+                        <th>Technology</th>
+                    </tr>
+                    <tr>
+                        <td><strong>1. Native Connectors</strong></td>
+                        <td>Modern platforms (Snowflake, Oracle, SAP)</td>
+                        <td>1-2 weeks</td>
+                        <td>AWS Glue (20+ connectors)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Secure Transfer</strong></td>
+                        <td>Any system (universal fallback)</td>
+                        <td>2-4 weeks</td>
+                        <td>AWS Transfer Family (SFTP)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Unstructured AI</strong></td>
+                        <td>Documents, images, IoT</td>
+                        <td>1-2 weeks</td>
+                        <td>Textract, Rekognition, IoT Core</td>
+                    </tr>
+                </table>
+
+                <h3>Pattern Selection Guide</h3>
+                <div class="key-point">
+                    <strong>Decision Flow:</strong>
+                    <ol>
+                        <li>Does CMO have modern data platform? → Pattern 1</li>
+                        <li>Legacy or on-prem system? → Pattern 2</li>
+                        <li>Unstructured data (PDFs, images)? → Add Pattern 3</li>
+                    </ol>
+                </div>
+
+                <h3>Common Combinations</h3>
+                <ul>
+                    <li><strong>Cloud-native CMO:</strong> Pattern 1 + Pattern 3</li>
+                    <li><strong>Enterprise database:</strong> Pattern 1 + Pattern 3</li>
+                    <li><strong>Legacy system:</strong> Pattern 2 + Pattern 3</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <strong>Key Point:</strong> Pattern 2 (SFTP) works with 100% of CMOs as universal fallback
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Data Lake Architecture -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Data Lake Architecture</h1>
+                <p class="slide-subtitle">Medallion: Bronze → Silver → Gold</p>
+            </div>
+            <div class="slide-content">
+                <h3>Three-Layer Architecture</h3>
+                
+                <div class="key-point">
+                    <strong>Bronze Layer (Raw / Immutable)</strong>
+                    <ul>
+                        <li>Exact copy of source data</li>
+                        <li>No transformation</li>
+                        <li>S3 Object Lock (WORM compliance)</li>
+                        <li>7-year retention (GxP)</li>
+                    </ul>
+                </div>
+
+                <div class="key-point">
+                    <strong>Silver Layer (Validated / Standardized)</strong>
+                    <ul>
+                        <li>Canonical pharma data model</li>
+                        <li>Data quality checks applied</li>
+                        <li>Schema enforcement</li>
+                        <li>Parquet format (columnar, compressed)</li>
+                    </ul>
+                </div>
+
+                <div class="key-point">
+                    <strong>Gold Layer (Business-Ready / Aggregated)</strong>
+                    <ul>
+                        <li>Pre-aggregated metrics</li>
+                        <li>Cross-CMO analytics</li>
+                        <li>Optimized for BI tools</li>
+                    </ul>
+                </div>
+
+                <h3>Canonical Data Domains</h3>
+                <ul>
+                    <li><strong>batch-manufacturing:</strong> Batch ID, product, dates, yields</li>
+                    <li><strong>quality-control:</strong> Test results, specifications, deviations</li>
+                    <li><strong>materials:</strong> Raw materials, lot numbers, suppliers</li>
+                    <li><strong>equipment:</strong> Equipment ID, maintenance, calibration</li>
+                    <li><strong>environmental:</strong> Temp, humidity, pressure, cleanroom</li>
+                    <li><strong>documents:</strong> CoA, batch records, deviations, CAPAs</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: Security Architecture -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Security Architecture</h1>
+                <p class="slide-subtitle">Defense-in-Depth, GxP-Ready</p>
+            </div>
+            <div class="slide-content">
+                <h3>Multi-Layer Security</h3>
+                
+                <table>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Controls</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Network</strong></td>
+                        <td>VPC, private subnets, VPC endpoints, security groups</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Identity</strong></td>
+                        <td>IAM Identity Center (SSO), IAM roles, ABAC, MFA</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Protection</strong></td>
+                        <td>KMS encryption (per-CMO keys), S3 Object Lock, Macie</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Governance</strong></td>
+                        <td>Lake Formation (column/row access), Glue Data Catalog</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Monitoring</strong></td>
+                        <td>CloudTrail, CloudWatch, Security Hub, GuardDuty</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Compliance</strong></td>
+                        <td>AWS Audit Manager (21 CFR Part 11)</td>
+                    </tr>
+                </table>
+
+                <h3>Per-CMO Isolation</h3>
+                <ul>
+                    <li>S3 bucket prefixes: s3://bucket/cmo-alpha/</li>
+                    <li>Lake Formation: Column/row-level permissions</li>
+                    <li>IAM policies: Attribute-based access control (ABAC)</li>
+                    <li>KMS keys: Optional per-CMO encryption keys</li>
+                    <li>CloudTrail: All access logged and auditable</li>
+                </ul>
+
+                <h3>Compliance Alignment</h3>
+                <ul>
+                    <li>21 CFR Part 11 (electronic records/signatures)</li>
+                    <li>GxP (Good Manufacturing Practice)</li>
+                    <li>GDPR (if EU CMOs involved)</li>
+                    <li>SOC 2 Type II, ISO 27001 (AWS certified)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: Scalability & Performance -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Scalability & Performance</h1>
+                <p class="slide-subtitle">Serverless Auto-Scaling</p>
+            </div>
+            <div class="slide-content">
+                <h3>Performance Benchmarks</h3>
+                <table>
+                    <tr>
+                        <th>Workload</th>
+                        <th>Volume</th>
+                        <th>Target</th>
+                        <th>Service</th>
+                    </tr>
+                    <tr>
+                        <td>Batch ingestion</td>
+                        <td>1 TB/day per CMO</td>
+                        <td>&lt; 2 hours</td>
+                        <td>Glue (50 DPUs)</td>
+                    </tr>
+                    <tr>
+                        <td>File processing</td>
+                        <td>1000 files/hour</td>
+                        <td>&lt; 5 min/file</td>
+                        <td>Lambda + Glue</td>
+                    </tr>
+                    <tr>
+                        <td>SQL queries</td>
+                        <td>100 GB scan</td>
+                        <td>&lt; 10 seconds</td>
+                        <td>Athena (Parquet)</td>
+                    </tr>
+                    <tr>
+                        <td>Document AI</td>
+                        <td>1000 pages/hour</td>
+                        <td>&lt; 30 sec/doc</td>
+                        <td>Textract async</td>
+                    </tr>
+                    <tr>
+                        <td>Gen AI queries</td>
+                        <td>100 queries/min</td>
+                        <td>&lt; 3 seconds</td>
+                        <td>Bedrock (Claude)</td>
+                    </tr>
+                </table>
+
+                <h3>Scalability Features</h3>
+                <ul>
+                    <li><strong>Serverless compute:</strong> Auto-scaling (0 to 1000+ concurrent)</li>
+                    <li><strong>Unlimited storage:</strong> S3 scales automatically</li>
+                    <li><strong>Parallel processing:</strong> Glue auto-scales workers</li>
+                    <li><strong>Columnar format:</strong> Parquet = 10x faster queries</li>
+                    <li><strong>Partition pruning:</strong> Query only relevant data</li>
+                </ul>
+
+                <h3>Cost Optimization</h3>
+                <ul>
+                    <li>S3 Intelligent-Tiering (auto-move to cheaper storage)</li>
+                    <li>Glue job bookmarks (incremental processing only)</li>
+                    <li>Athena result caching (avoid re-scanning)</li>
+                    <li>Spot instances for non-critical jobs (70% savings)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11: Implementation Roadmap -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Implementation Roadmap</h1>
+                <p class="slide-subtitle">Phased Approach - Value in 6 Weeks</p>
+            </div>
+            <div class="slide-content">
+                <h3>Phase 1: Foundation (Weeks 1-6)</h3>
+                <ul>
+                    <li>Core infrastructure deployment</li>
+                    <li>Pattern 2 (SFTP) implementation</li>
+                    <li>2 pilot CMOs onboarded</li>
+                    <li>Legal template library</li>
+                    <li><strong>Milestone: First CMO live</strong></li>
+                </ul>
+
+                <h3>Phase 2: Expansion (Weeks 7-12)</h3>
+                <ul>
+                    <li>Add Pattern 1 (Native Connectors)</li>
+                    <li>Add Pattern 3 (AI Processing)</li>
+                    <li>Self-service portal launch</li>
+                    <li>5-10 additional CMOs</li>
+                    <li><strong>Milestone: 10 CMOs integrated</strong></li>
+                </ul>
+
+                <h3>Phase 3: Scale & AI (Weeks 13-20)</h3>
+                <ul>
+                    <li>Full Bedrock AI capabilities</li>
+                    <li>Cross-CMO analytics</li>
+                    <li>Advanced data quality automation</li>
+                    <li>20+ CMOs</li>
+                    <li><strong>Milestone: Production platform</strong></li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h3 style="margin-top: 0;">Risk Mitigation</h3>
+                    <ul>
+                        <li><strong>CMO adoption:</strong> Multiple patterns, pilot first</li>
+                        <li><strong>Data quality:</strong> Automated validation, Bronze preserves raw</li>
+                        <li><strong>Security:</strong> Multi-layer defense, per-CMO isolation</li>
+                        <li><strong>Cost:</strong> Pay-as-you-go, monthly reviews</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: TCO & ROI -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Total Cost of Ownership</h1>
+                <p class="slide-subtitle">Cost Model & ROI Analysis</p>
+            </div>
+            <div class="slide-content">
+                <h3>Monthly Infrastructure Cost (20 CMOs)</h3>
+                <table>
+                    <tr>
+                        <th>Category</th>
+                        <th>Monthly Cost</th>
+                    </tr>
+                    <tr>
+                        <td>Storage (S3)</td>
+                        <td>$2,550</td>
+                    </tr>
+                    <tr>
+                        <td>Compute (Glue, Lambda, Athena)</td>
+                        <td>$2,450</td>
+                    </tr>
+                    <tr>
+                        <td>AI Services (Textract, Rekognition, Bedrock)</td>
+                        <td>$1,110</td>
+                    </tr>
+                    <tr>
+                        <td>Integration & Networking</td>
+                        <td>$1,000</td>
+                    </tr>
+                    <tr>
+                        <td>Security & Governance</td>
+                        <td>$140</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics (OpenSearch, QuickSight)</td>
+                        <td>$840</td>
+                    </tr>
+                    <tr>
+                        <th>Total Monthly</th>
+                        <th>$8,090</th>
+                    </tr>
+                    <tr>
+                        <th>Annual Infrastructure</th>
+                        <th>$97,080</th>
+                    </tr>
+                </table>
+
+                <h3>Total Annual TCO</h3>
+                <ul>
+                    <li>Infrastructure: $97,000</li>
+                    <li>DevOps team (2 FTE): $400,000</li>
+                    <li>AWS Support: $15,000</li>
+                    <li>Training: $10,000</li>
+                    <li>Contingency (10%): $52,000</li>
+                    <li><strong>Total: $574,000/year</strong></li>
+                </ul>
+
+                <div class="metric-box">
+                    <span class="metric-value">$28,700</span>
+                    <span class="metric-label">Cost per CMO/year</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">7 CMOs</span>
+                    <span class="metric-label">Break-even Point</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: ROI Analysis -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">ROI Analysis</h1>
+                <p class="slide-subtitle">Platform Pays for Itself After 7 CMOs</p>
+            </div>
+            <div class="slide-content">
+                <h3>Current State (Per CMO Integration)</h3>
+                <ul>
+                    <li>Time: 3-6 months</li>
+                    <li>Merck effort: 200 hours × $150/hour = $30,000</li>
+                    <li>CMO effort: 100 hours × $150/hour = $15,000</li>
+                    <li>Opportunity cost: 4 months delay = $50,000</li>
+                    <li><strong>Total cost per CMO: $95,000</strong></li>
+                </ul>
+
+                <h3>Future State (With Platform)</h3>
+                <ul>
+                    <li>Time: 1-4 weeks</li>
+                    <li>Merck effort: 20 hours × $150/hour = $3,000</li>
+                    <li>CMO effort: 10 hours × $150/hour = $1,500</li>
+                    <li>Platform cost: $28,700/year = $2,400/month</li>
+                    <li><strong>Total cost per CMO: $6,900 (first month)</strong></li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h3 style="margin-top: 0;">Savings Per CMO</h3>
+                    <p style="font-size: 1.3em;">One-time: $95,000 - $6,900 = <strong>$88,100</strong></p>
+                    <p style="font-size: 1.3em;">Break-even: $574,000 / $88,100 = <strong>6.5 CMOs</strong></p>
+                </div>
+
+                <h3>Additional Benefits (Unquantified)</h3>
+                <ul>
+                    <li>Faster access to data → Better decision making</li>
+                    <li>AI insights not previously possible</li>
+                    <li>Cross-CMO analytics and benchmarking</li>
+                    <li>Reduced compliance risk (automated audit trail)</li>
+                    <li>Scalability to 100+ CMOs without linear cost increase</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 14: Technology Stack -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Technology Stack</h1>
+                <p class="slide-subtitle">AWS Service Selection Rationale</p>
+            </div>
+            <div class="slide-content">
+                <h3>Core Services</h3>
+                <table>
+                    <tr>
+                        <th>Service</th>
+                        <th>Purpose</th>
+                        <th>Why Selected</th>
+                    </tr>
+                    <tr>
+                        <td><strong>S3</strong></td>
+                        <td>Data lake storage</td>
+                        <td>Unlimited scale, 11 nines durability</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Glue</strong></td>
+                        <td>ETL & catalog</td>
+                        <td>Serverless, 20+ connectors</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Transfer Family</strong></td>
+                        <td>SFTP server</td>
+                        <td>Fully managed, auto-scales</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lake Formation</strong></td>
+                        <td>Data governance</td>
+                        <td>Fine-grained access control</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Athena</strong></td>
+                        <td>SQL queries</td>
+                        <td>Serverless, pay-per-query</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Textract</strong></td>
+                        <td>Document AI</td>
+                        <td>Best-in-class OCR</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bedrock</strong></td>
+                        <td>Generative AI</td>
+                        <td>Multiple models, guardrails</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lambda</strong></td>
+                        <td>Event processing</td>
+                        <td>Serverless, sub-second</td>
+                    </tr>
+                </table>
+
+                <h3>Service Selection Criteria</h3>
+                <ul>
+                    <li><strong>Serverless-first:</strong> Minimize operational overhead</li>
+                    <li><strong>Managed services:</strong> Reduce undifferentiated work</li>
+                    <li><strong>GxP-qualified:</strong> Pharma compliance ready</li>
+                    <li><strong>Proven at scale:</strong> Used by other pharma companies</li>
+                    <li><strong>Cost-effective:</strong> Pay-per-use pricing</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 15: Summary & Next Steps -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Summary & Recommendations</h1>
+                <p class="slide-subtitle">Path Forward</p>
+            </div>
+            <div class="slide-content">
+                <h3>Architecture Highlights</h3>
+                <ul>
+                    <li>✅ Self-service CMO onboarding (30 min vs 3-6 months)</li>
+                    <li>✅ Data contracts & schema registry (automated validation)</li>
+                    <li>✅ 3 proven patterns (100% CMO coverage)</li>
+                    <li>✅ Serverless-first (minimal ops overhead)</li>
+                    <li>✅ AI-native (Textract, Rekognition, Bedrock)</li>
+                    <li>✅ Security by design (GxP-ready)</li>
+                    <li>✅ Cost-effective ($574K/year for 20 CMOs)</li>
+                </ul>
+
+                <h3>Key Metrics</h3>
+                <div class="metric-box">
+                    <span class="metric-value">90%</span>
+                    <span class="metric-label">Time Reduction</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">90%</span>
+                    <span class="metric-label">Effort Reduction</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">7 CMOs</span>
+                    <span class="metric-label">Break-even</span>
+                </div>
+
+                <h3>Immediate Next Steps</h3>
+                <ol>
+                    <li><strong>Week 1-2:</strong> Architecture review with EA team</li>
+                    <li><strong>Week 1-2:</strong> CMO discovery interviews (5 CMOs)</li>
+                    <li><strong>Week 2-4:</strong> Security & compliance review</li>
+                    <li><strong>Week 2-4:</strong> Legal template development</li>
+                    <li><strong>Week 4:</strong> Go/No-Go decision</li>
+                    <li><strong>Week 5:</strong> Phase 1 kickoff</li>
+                </ol>
+
+                <div class="highlight-box">
+                    <h3 style="margin-top: 0;">Recommendation</h3>
+                    <p style="font-size: 1.2em;">
+                        Proceed with Phase 0 (Discovery & Design) for 4 weeks to validate 
+                        architecture, finalize security design, and select pilot CMOs.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-button" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

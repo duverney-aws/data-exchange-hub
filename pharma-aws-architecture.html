@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Data Exchange Hub - AWS Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #232f3e 0%, #1a242f 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #232f3e 0%, #3b4a5c 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .diagram {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .zone {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e1e4e8;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .zone:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border-color: #ff9900;
+        }
+        
+        .zone-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #232f3e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #ff9900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .service {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .service:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border-color: #ff9900;
+        }
+        
+        .service-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .service-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #232f3e;
+            margin-bottom: 5px;
+        }
+        
+        .service-desc {
+            font-size: 11px;
+            color: #586069;
+            line-height: 1.4;
+        }
+        
+        /* AWS Service Colors */
+        .compute { border-left: 4px solid #ff9900; }
+        .storage { border-left: 4px solid #7aa116; }
+        .database { border-left: 4px solid #527fff; }
+        .analytics { border-left: 4px solid #8b66d9; }
+        .ml { border-left: 4px solid #01a88d; }
+        .security { border-left: 4px solid #dd344c; }
+        .management { border-left: 4px solid #d86613; }
+        .integration { border-left: 4px solid #e7157b; }
+        
+        .cmo-section {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f2 100%);
+            border: 2px solid #5ba4cf;
+            margin-bottom: 30px;
+        }
+        
+        .enterprise-section {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 2px solid #ff9800;
+        }
+        
+        .flow-arrow {
+            text-align: center;
+            font-size: 48px;
+            color: #ff9900;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #e1e4e8;
+        }
+        
+        .patterns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .pattern {
+            background: #f8f9fa;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .pattern-title {
+            font-weight: 600;
+            color: #232f3e;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .medallion {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .layer {
+            background: #f8f9fa;
+            border: 3px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .layer::after {
+            content: '→';
+            position: absolute;
+            right: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 32px;
+            color: #ff9900;
+            font-weight: bold;
+        }
+        
+        .layer:last-child::after {
+            content: '';
+        }
+        
+        .bronze { border-color: #cd7f32; background: linear-gradient(135deg, #fef5e7 0%, #fdebd0 100%); }
+        .silver { border-color: #c0c0c0; background: linear-gradient(135deg, #f4f4f4 0%, #e8e8e8 100%); }
+        .gold { border-color: #ffd700; background: linear-gradient(135deg, #fffbea 0%, #fff9db 100%); }
+        
+        .layer-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #232f3e;
+        }
+        
+        .key-flows {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .key-flows h3 {
+            color: #232f3e;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .flow-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #4caf50;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .flow-item strong {
+            color: #2e7d32;
+        }
+        
+        @media (max-width: 1200px) {
+            .patterns, .medallion {
+                grid-template-columns: 1fr;
+            }
+            
+            .services {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 PHARMA DATA EXCHANGE HUB</h1>
+            <p>CMO Integration Architecture - AWS Cloud Native Solution</p>
+        </div>
+        
+        <div class="diagram">
+            <!-- CMO Ecosystem -->
+            <div class="zone cmo-section">
+                <div class="zone-title">🌐 CMO Ecosystem (External Partners)</div>
+                <div class="services">
+                    <div class="service integration">
+                        <div class="service-icon">☁️</div>
+                        <div class="service-name">CMO A - Cloud Native</div>
+                        <div class="service-desc">Snowflake / Databricks<br>Modern Data Stack</div>
+                    </div>
+                    <div class="service database">
+                        <div class="service-icon">🗄️</div>
+                        <div class="service-name">CMO B - Enterprise DB</div>
+                        <div class="service-desc">Oracle / SQL Server<br>Traditional Systems</div>
+                    </div>
+                    <div class="service storage">
+                        <div class="service-icon">📁</div>
+                        <div class="service-name">CMO C - Legacy</div>
+                        <div class="service-desc">On-Premises SFTP<br>File-based Transfer</div>
+                    </div>
+                    <div class="service ml">
+                        <div class="service-icon">📄</div>
+                        <div class="service-name">CMO D - Documents</div>
+                        <div class="service-desc">PDFs / Images<br>Unstructured Data</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">↓</div>
+            
+            <!-- AWS Integration Hub -->
+            <div class="zone">
+                <div class="zone-title">☁️ AWS Integration Hub - Self-Service Platform</div>
+                
+                <!-- Self-Service Onboarding -->
+                <div style="background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #232f3e; margin-bottom: 15px;">🚀 Self-Service Onboarding (30 Minutes)</h3>
+                    <div class="services">
+                        <div class="service compute">
+                            <div class="service-icon">🎨</div>
+                            <div class="service-name">AWS Amplify</div>
+                            <div class="service-desc">CMO Portal UI<br>React Frontend</div>
+                        </div>
+                        <div class="service integration">
+                            <div class="service-icon">🚪</div>
+                            <div class="service-name">API Gateway</div>
+                            <div class="service-desc">RESTful API<br>Authentication</div>
+                        </div>
+                        <div class="service compute">
+                            <div class="service-icon">λ</div>
+                            <div class="service-name">Lambda</div>
+                            <div class="service-desc">Portal Logic<br>Serverless Functions</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px;">
+                        <h4 style="color: #232f3e; margin-bottom: 10px; font-size: 14px;">📋 Data Contracts & Schema Registry</h4>
+                        <div class="services">
+                            <div class="service analytics">
+                                <div class="service-icon">📊</div>
+                                <div class="service-name">Glue Schema Registry</div>
+                                <div class="service-desc">Versioned Schemas<br>Data Validation</div>
+                            </div>
+                            <div class="service database">
+                                <div class="service-icon">📝</div>
+                                <div class="service-name">DynamoDB</div>
+                                <div class="service-desc">Data Contracts<br>Mappings & SLAs</div>
+                            </div>
+                            <div class="service security">
+                                <div class="service-icon">🔐</div>
+                                <div class="service-name">Secrets Manager</div>
+                                <div class="service-desc">CMO Credentials<br>Secure Storage</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ingestion Patterns -->
+                <div style="background: #fff9e6; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #232f3e; margin-bottom: 15px;">📥 Ingestion Layer - 3 Data Patterns</h3>
+                    <div class="patterns">
+                        <div class="pattern">
+                            <div class="pattern-title">Pattern 1: Native Connectors</div>
+                            <div class="service integration">
+                                <div class="service-icon">🔌</div>
+                                <div class="service-name">AWS Glue Connectors</div>
+                                <div class="service-desc">20+ Database Types<br>Snowflake, Oracle, SQL</div>
+                            </div>
+                        </div>
+                        <div class="pattern">
+                            <div class="pattern-title">Pattern 2: Secure Transfer</div>
+                            <div class="service storage">
+                                <div class="service-icon">🔒</div>
+                                <div class="service-name">AWS Transfer Family</div>
+                                <div class="service-desc">SFTP/FTPS/FTP<br>Managed File Transfer</div>
+                            </div>
+                        </div>
+                        <div class="pattern">
+                            <div class="pattern-title">Pattern 3: Unstructured AI</div>
+                            <div class="services" style="grid-template-columns: 1fr;">
+                                <div class="service ml">
+                                    <div class="service-icon">📄</div>
+                                    <div class="service-name">Textract + Rekognition</div>
+                                    <div class="service-desc">Document OCR & Image Analysis</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Lake - Medallion Architecture -->
+                <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #232f3e; margin-bottom: 15px;">🏞️ Data Lake (S3) - Medallion Architecture</h3>
+                    <div class="medallion">
+                        <div class="layer bronze">
+                            <div class="layer-title">🥉 BRONZE LAYER</div>
+                            <div class="service storage">
+                                <div class="service-icon">📦</div>
+                                <div class="service-name">S3 + Object Lock</div>
+                                <div class="service-desc">Raw Immutable Data<br>7-Year Retention<br>Audit Trail</div>
+                            </div>
+                        </div>
+                        <div class="layer silver">
+                            <div class="layer-title">🥈 SILVER LAYER</div>
+                            <div class="service analytics">
+                                <div class="service-icon">✓</div>
+                                <div class="service-name">Validated Data</div>
+                                <div class="service-desc">Canonical Model<br>Parquet Format<br>Schema Enforced</div>
+                            </div>
+                        </div>
+                        <div class="layer gold">
+                            <div class="layer-title">🥇 GOLD LAYER</div>
+                            <div class="service analytics">
+                                <div class="service-icon">⭐</div>
+                                <div class="service-name">Business Ready</div>
+                                <div class="service-desc">Aggregated Metrics<br>Pre-computed<br>Query Optimized</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Processing & Analytics -->
+                <div style="background: #e8eaf6; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #232f3e; margin-bottom: 15px;">⚙️ Processing & Analytics Layer</h3>
+                    <div class="services">
+                        <div class="service analytics">
+                            <div class="service-icon">🔄</div>
+                            <div class="service-name">AWS Glue / EMR</div>
+                            <div class="service-desc">PySpark ETL<br>Data Transformation<br>Batch Processing</div>
+                        </div>
+                        <div class="service database">
+                            <div class="service-icon">🔍</div>
+                            <div class="service-name">Athena</div>
+                            <div class="service-desc">Serverless SQL<br>Pay-per-Query<br>Presto Engine</div>
+                        </div>
+                        <div class="service ml">
+                            <div class="service-icon">🤖</div>
+                            <div class="service-name">Bedrock</div>
+                            <div class="service-desc">Gen AI (Claude/Titan)<br>Natural Language Q&A<br>Data Insights</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Governance & Security -->
+                <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #232f3e; margin-bottom: 15px;">🛡️ Governance & Security</h3>
+                    <div class="services">
+                        <div class="service security">
+                            <div class="service-icon">🔐</div>
+                            <div class="service-name">Lake Formation</div>
+                            <div class="service-desc">Fine-grained Access<br>Column/Row Level<br>Per-CMO Isolation</div>
+                        </div>
+                        <div class="service security">
+                            <div class="service-icon">🔑</div>
+                            <div class="service-name">AWS KMS</div>
+                            <div class="service-desc">Encryption at Rest<br>Per-CMO Keys<br>Key Rotation</div>
+                        </div>
+                        <div class="service management">
+                            <div class="service-icon">📋</div>
+                            <div class="service-name">CloudTrail</div>
+                            <div class="service-desc">Audit Logs<br>All API Calls<br>Immutable Records</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Monitoring & Orchestration -->
+                <div style="background: #e0f2f1; padding: 20px; border-radius: 8px;">
+                    <h3 style="color: #232f3e; margin-bottom: 15px;">📊 Monitoring & Orchestration</h3>
+                    <div class="services">
+                        <div class="service management">
+                            <div class="service-icon">📈</div>
+                            <div class="service-name">CloudWatch</div>
+                            <div class="service-desc">Dashboards & Metrics<br>Alarms & Alerts<br>Log Aggregation</div>
+                        </div>
+                        <div class="service integration">
+                            <div class="service-icon">⚡</div>
+                            <div class="service-name">EventBridge</div>
+                            <div class="service-desc">Event Routing<br>Real-time Actions<br>Workflow Triggers</div>
+                        </div>
+                        <div class="service compute">
+                            <div class="service-icon">🔀</div>
+                            <div class="service-name">Step Functions</div>
+                            <div class="service-desc">Pipeline Deployment<br>State Machines<br>Orchestration</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">↓</div>
+            
+            <!-- Merck Enterprise Systems -->
+            <div class="zone enterprise-section">
+                <div class="zone-title">🏢 Merck Enterprise Systems (Data Consumers)</div>
+                <div class="services">
+                    <div class="service database">
+                        <div class="service-icon">💼</div>
+                        <div class="service-name">ERP (SAP)</div>
+                        <div class="service-desc">Batch Data<br>Materials Management<br>Production Planning</div>
+                    </div>
+                    <div class="service integration">
+                        <div class="service-icon">✅</div>
+                        <div class="service-name">QMS (Veeva)</div>
+                        <div class="service-desc">Deviations<br>CAPAs<br>Quality Control</div>
+                    </div>
+                    <div class="service database">
+                        <div class="service-icon">🔬</div>
+                        <div class="service-name">LIMS</div>
+                        <div class="service-desc">Test Results<br>Lab Data<br>Specifications</div>
+                    </div>
+                    <div class="service analytics">
+                        <div class="service-icon">📊</div>
+                        <div class="service-name">Data Warehouse (Redshift)</div>
+                        <div class="service-desc">Analytics<br>Cross-CMO Insights<br>Historical Reporting</div>
+                    </div>
+                    <div class="service ml">
+                        <div class="service-icon">📱</div>
+                        <div class="service-name">QuickSight</div>
+                        <div class="service-desc">BI Dashboards<br>Reports<br>Gen AI Q&A</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Flows -->
+            <div class="key-flows">
+                <h3>🔄 Key Data Flows</h3>
+                <div class="flow-item">
+                    <strong>1. CMO Onboarding (One-time, 30 minutes):</strong><br>
+                    CMO Portal → API Gateway → Lambda → Schema Registry + Data Contracts → Step Functions → Pipeline Deployed
+                </div>
+                <div class="flow-item">
+                    <strong>2. Data Ingestion (Ongoing, automated):</strong><br>
+                    CMO Data → Pattern 1/2/3 → Bronze Layer → Validation → Silver Layer → Aggregation → Gold Layer
+                </div>
+                <div class="flow-item">
+                    <strong>3. Data Consumption (Self-service):</strong><br>
+                    Gold Layer → Athena (SQL) → Merck Systems | Gold Layer → Bedrock (Gen AI) → QuickSight Dashboards
+                </div>
+                <div class="flow-item">
+                    <strong>4. Governance (Continuous):</strong><br>
+                    All Data → Lake Formation (Access Control) + KMS (Encryption) + CloudTrail (Audit Trail)
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff9900; border-color: #ff9900;"></div>
+                    <span>Compute Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #7aa116; border-color: #7aa116;"></div>
+                    <span>Storage Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #527fff; border-color: #527fff;"></div>
+                    <span>Database Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #8b66d9; border-color: #8b66d9;"></div>
+                    <span>Analytics Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #01a88d; border-color: #01a88d;"></div>
+                    <span>AI/ML Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #dd344c; border-color: #dd344c;"></div>
+                    <span>Security Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #d86613; border-color: #d86613;"></div>
+                    <span>Management Services</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e7157b; border-color: #e7157b;"></div>
+                    <span>Integration Services</span>
+                </div>
+            </div>
+            
+            <!-- Architecture Principles -->
+            <div style="background: #fff; padding: 25px; border-radius: 8px; margin-top: 30px; border: 2px solid #4caf50;">
+                <h3 style="color: #232f3e; margin-bottom: 15px;">✅ Architecture Principles</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Hub-and-Spoke:</strong> Decoupled CMOs from Merck systems
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Self-Service:</strong> CMOs onboard without Merck IT involvement
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Canonical Model:</strong> Consistent data regardless of source
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Medallion Architecture:</strong> Bronze → Silver → Gold layers
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Serverless-First:</strong> Auto-scaling, pay-per-use model
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Security by Design:</strong> Multi-layer defense, per-CMO isolation
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Event-Driven:</strong> Real-time processing and notifications
+                    </div>
+                    <div style="padding: 12px; background: #f1f8e9; border-radius: 6px;">
+                        <strong>✓ Immutable Audit Trail:</strong> Bronze layer never modified
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

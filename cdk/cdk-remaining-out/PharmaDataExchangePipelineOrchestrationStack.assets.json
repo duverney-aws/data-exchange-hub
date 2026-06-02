@@ -1,0 +1,34 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "230554bf147492db9128ceb3c52e5203ef1d2da631ae05acaf54b7879829d192": {
+      "source": {
+        "path": "asset.230554bf147492db9128ceb3c52e5203ef1d2da631ae05acaf54b7879829d192",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "550129454303-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-550129454303-us-east-1",
+          "objectKey": "230554bf147492db9128ceb3c52e5203ef1d2da631ae05acaf54b7879829d192.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-file-publishing-role-550129454303-us-east-1"
+        }
+      }
+    },
+    "92d7493fe1bd5571a4401aadc4d7a1dacbfd7732c1893e688387ed6465c81056": {
+      "source": {
+        "path": "PharmaDataExchangePipelineOrchestrationStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "550129454303-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-550129454303-us-east-1",
+          "objectKey": "92d7493fe1bd5571a4401aadc4d7a1dacbfd7732c1893e688387ed6465c81056.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-file-publishing-role-550129454303-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

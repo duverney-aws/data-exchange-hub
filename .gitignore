@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+frontend/dist.zip
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+cdk/lambda_src/
+
+# Environment
+.env
+.env.local
+frontend/.env.local
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CDK
+cdk/cdk.out/
+cdk/.cdk.staging/
+
+# CDK output
+cdk/cdk-out-new/
+cdk/cdk.out/
+cdk.out/
+
+# Hypothesis test cache
+.hypothesis/
+
+# PowerPoint files (large binary)
+*.pptx

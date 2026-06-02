@@ -1,0 +1,906 @@
+{
+ "Resources": {
+  "ContractApiHandlerServiceRole85619981": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/Resource"
+   }
+  },
+  "ContractApiHandlerServiceRoleDefaultPolicyDB207745": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputFnGetAttDataContractsTable1E9BE7CAArnCA3C0F06"
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ContractApiHandlerServiceRoleDefaultPolicyDB207745",
+    "Roles": [
+     {
+      "Ref": "ContractApiHandlerServiceRole85619981"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApiHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ContractApiHandler7C65ADCC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-550129454303-us-east-1",
+     "S3Key": "9b87ddbdc3332600ae3fd577cb75d51ae6b8c464043eb03baef1274e7c7fbe3d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Fn::ImportValue": "PharmaDataExchangeDatabaseStack:ExportsOutputRefDataContractsTable1E9BE7CA04CF1C96"
+      }
+     }
+    },
+    "Handler": "handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ContractApiHandlerServiceRole85619981",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ContractApiHandlerServiceRoleDefaultPolicyDB207745",
+    "ContractApiHandlerServiceRole85619981"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApiHandler/Resource",
+    "aws:asset:path": "asset.9b87ddbdc3332600ae3fd577cb75d51ae6b8c464043eb03baef1274e7c7fbe3d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ContractApi790206E3": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Data Contract Management API",
+    "Name": "Contract API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Resource"
+   }
+  },
+  "ContractApiDeployment78648640681538c67fbcace6f52e839eb18af7a4": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Data Contract Management API",
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "DependsOn": [
+    "ContractApiapicontractcontractIdactivateOPTIONSE8B7E068",
+    "ContractApiapicontractcontractIdactivatePOST456F6954",
+    "ContractApiapicontractcontractIdactivateC179782D",
+    "ContractApiapicontractcontractIdGET6AB32B42",
+    "ContractApiapicontractcontractIdOPTIONSA2BAB9DE",
+    "ContractApiapicontractcontractIdPUTA57D4B0E",
+    "ContractApiapicontractcontractIdF07C6972",
+    "ContractApiapicontractOPTIONS72456119",
+    "ContractApiapicontractPOSTA3A0FF6C",
+    "ContractApiapicontract7CEF3644",
+    "ContractApiapiOPTIONSD57403B2",
+    "ContractApiapi307015FE",
+    "ContractApiOPTIONS0B27E423"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Deployment/Resource"
+   }
+  },
+  "ContractApiDeploymentStageprod2118A51D": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "ContractApiDeployment78648640681538c67fbcace6f52e839eb18af7a4"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "ContractApiOPTIONS0B27E423": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ContractApi790206E3",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/OPTIONS/Resource"
+   }
+  },
+  "ContractApiapi307015FE": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ContractApi790206E3",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "api",
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/Resource"
+   }
+  },
+  "ContractApiapiOPTIONSD57403B2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ContractApiapi307015FE"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/OPTIONS/Resource"
+   }
+  },
+  "ContractApiapicontract7CEF3644": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ContractApiapi307015FE"
+    },
+    "PathPart": "contract",
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/Resource"
+   }
+  },
+  "ContractApiapicontractOPTIONS72456119": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ContractApiapicontract7CEF3644"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/OPTIONS/Resource"
+   }
+  },
+  "ContractApiapicontractPOSTApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontractA947C71F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/",
+       {
+        "Ref": "ContractApiDeploymentStageprod2118A51D"
+       },
+       "/POST/api/contract"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract"
+   }
+  },
+  "ContractApiapicontractPOSTApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontract105E8779": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/test-invoke-stage/POST/api/contract"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract"
+   }
+  },
+  "ContractApiapicontractPOSTA3A0FF6C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ContractApiHandler7C65ADCC",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ContractApiapicontract7CEF3644"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/POST/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdF07C6972": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ContractApiapicontract7CEF3644"
+    },
+    "PathPart": "{contractId}",
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdOPTIONSA2BAB9DE": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ContractApiapicontractcontractIdF07C6972"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/OPTIONS/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdGETApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3GETapicontractcontractIdD796EEF4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/",
+       {
+        "Ref": "ContractApiDeploymentStageprod2118A51D"
+       },
+       "/GET/api/contract/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}"
+   }
+  },
+  "ContractApiapicontractcontractIdGETApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3GETapicontractcontractIdE40DDFAB": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/test-invoke-stage/GET/api/contract/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.GET..api.contract.{contractId}"
+   }
+  },
+  "ContractApiapicontractcontractIdGET6AB32B42": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ContractApiHandler7C65ADCC",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ContractApiapicontractcontractIdF07C6972"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/GET/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdPUTApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3PUTapicontractcontractIdE4AABF42": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/",
+       {
+        "Ref": "ContractApiDeploymentStageprod2118A51D"
+       },
+       "/PUT/api/contract/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}"
+   }
+  },
+  "ContractApiapicontractcontractIdPUTApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3PUTapicontractcontractId7F738BEB": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/test-invoke-stage/PUT/api/contract/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.PUT..api.contract.{contractId}"
+   }
+  },
+  "ContractApiapicontractcontractIdPUTA57D4B0E": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "PUT",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ContractApiHandler7C65ADCC",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ContractApiapicontractcontractIdF07C6972"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/PUT/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdactivateC179782D": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ContractApiapicontractcontractIdF07C6972"
+    },
+    "PathPart": "activate",
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdactivateOPTIONSE8B7E068": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ContractApiapicontractcontractIdactivateC179782D"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/OPTIONS/Resource"
+   }
+  },
+  "ContractApiapicontractcontractIdactivatePOSTApiPermissionPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontractcontractIdactivate3A77FDDE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/",
+       {
+        "Ref": "ContractApiDeploymentStageprod2118A51D"
+       },
+       "/POST/api/contract/*/activate"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/ApiPermission.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate"
+   }
+  },
+  "ContractApiapicontractcontractIdactivatePOSTApiPermissionTestPharmaDataExchangeContractApiStackContractApi6738D5B3POSTapicontractcontractIdactivateDB439882": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ContractApiHandler7C65ADCC",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:550129454303:",
+       {
+        "Ref": "ContractApi790206E3"
+       },
+       "/test-invoke-stage/POST/api/contract/*/activate"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/ApiPermission.Test.PharmaDataExchangeContractApiStackContractApi6738D5B3.POST..api.contract.{contractId}.activate"
+   }
+  },
+  "ContractApiapicontractcontractIdactivatePOST456F6954": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ContractApiHandler7C65ADCC",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ContractApiapicontractcontractIdactivateC179782D"
+    },
+    "RestApiId": {
+     "Ref": "ContractApi790206E3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/ContractApi/Default/api/contract/{contractId}/activate/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOUW6DQAxEz5L/xUngBEmr/lVF5ACRs7jEBXYR9gohxN2r3RA1/Zpnz2jsHI75AQ47nCSzdZt1fIPlomhbg5Nclw77W42wfARnlb0zb9/ulUsaexZh71bD2MNS+Y6ikbT0Hds55RKtRooripAKnKIYKeAcbEt6RiGDAzeoNOEMS0Wip4FT14bvNHR+7slp3L5MF8UmXX1AReLDaCl1fpLefR3NjZ7u1px4Xf/W6bFYxK6Jma+gQ9B/aVPOevduX8CxgHz3I8zZGJxyT1A99Bcn5+HGWQEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "PharmaDataExchangeContractApiStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ContractApiEndpointB0D788D6": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ContractApi790206E3"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ContractApiDeploymentStageprod2118A51D"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

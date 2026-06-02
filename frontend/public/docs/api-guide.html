@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharma Data Exchange Hub - API &amp; Technical Guide</title>
+  <style>
+    body { font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 40px 20px; color: #16191f; line-height: 1.6; }
+    h1 { color: #0972d3; border-bottom: 2px solid #0972d3; padding-bottom: 8px; }
+    h2 { color: #232f3e; margin-top: 32px; }
+    h3 { color: #545b64; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #d5dbdb; padding: 8px 12px; text-align: left; }
+    th { background: #232f3e; color: white; }
+    tr:nth-child(even) { background: #f2f3f3; }
+    code { background: #f2f3f3; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+    pre { background: #232f3e; color: #d5dbdb; padding: 16px; border-radius: 4px; overflow-x: auto; }
+    pre code { background: none; color: inherit; }
+    .nav { background: #232f3e; color: white; padding: 12px 20px; margin: -40px -20px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .nav a { color: #0972d3; text-decoration: none; margin-left: 16px; }
+    .nav a:hover { text-decoration: underline; }
+    .method { display: inline-block; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 13px; color: white; }
+    .post { background: #49aa19; }
+    .get { background: #0972d3; }
+    .put { background: #d97706; }
+    .delete { background: #d91515; }
+    .btn { display: inline-block; background: #0972d3; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; margin: 8px 4px 8px 0; }
+    .btn:hover { background: #065299; }
+    .callout { background: #f2f8fd; border-left: 4px solid #0972d3; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+    .callout-warn { background: #fef8f0; border-left-color: #d97706; }
+    @media print { .nav, .btn { display: none; } body { max-width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <strong>Pharma Data Exchange Hub</strong>
+    <div>
+      <a href="/docs/user-guide.html">User Guide</a>
+      <a href="/docs/api-guide.html">API Guide</a>
+      <a href="/">Portal</a>
+    </div>
+  </div>
+
+  <h1>API &amp; Technical Guide</h1>
+  <p><a class="btn" href="javascript:window.print()">Export to PDF</a></p>
+
+  <h2>API Endpoints</h2>
+  <table>
+    <tr><th>API</th><th>Base URL</th><th>Purpose</th></tr>
+    <tr><td>Contract API</td><td><code>https://4841ud8xri.execute-api.us-east-1.amazonaws.com/prod</code></td><td>CMO, contract, connection, batch, product, schema, SLA operations</td></tr>
+    <tr><td>Schema API</td><td><code>https://ootbzgzcp0.execute-api.us-east-1.amazonaws.com/prod</code></td><td>Schema inference and Glue registration (legacy)</td></tr>
+    <tr><td>NL Query API</td><td><code>https://u02uvpqhg1.execute-api.us-east-1.amazonaws.com/prod</code></td><td>Natural language to SQL via Bedrock + Athena</td></tr>
+  </table>
+
+  <h2>Authentication</h2>
+  <p>All API endpoints require a valid Cognito JWT token in the <code>Authorization</code> header.</p>
+
+  <h3>Cognito Configuration</h3>
+  <table>
+    <tr><th>Property</th><th>Value</th></tr>
+    <tr><td>User Pool ID</td><td><code>us-east-1_uT79YqQ5x</code></td></tr>
+    <tr><td>App Client ID</td><td><code>2eitutbi1gkogudchaudb9rtr4</code></td></tr>
+    <tr><td>Hosted UI Domain</td><td><code>pharma-data-exchange-portal.auth.us-east-1.amazoncognito.com</code></td></tr>
+    <tr><td>Sign-in Alias</td><td>Email</td></tr>
+    <tr><td>Groups</td><td><code>merck-admins</code>, <code>cmo-users</code></td></tr>
+    <tr><td>Custom Attributes</td><td><code>custom:organization</code> — links CMO user to their cmoId</td></tr>
+  </table>
+
+  <h3>Auth Flow</h3>
+  <ol>
+    <li>User visits portal → redirected to Cognito Hosted UI</li>
+    <li>User signs in with email/password → Cognito returns authorization code</li>
+    <li>Frontend exchanges code for JWT tokens (ID token, access token, refresh token)</li>
+    <li>All API calls include: <code>Authorization: Bearer {idToken}</code></li>
+    <li>API Gateway validates JWT via Cognito Authorizer → passes claims to Lambda</li>
+  </ol>
+
+  <h3>JWT Claims Used by Backend</h3>
+  <pre><code>{
+  "sub": "user-uuid",
+  "email": "user@example.com",
+  "cognito:groups": ["merck-admins"],
+  "custom:organization": "cmo-xxxxxxxx",
+  "given_name": "John",
+  "family_name": "Doe"
+}</code></pre>
+
+  <div class="callout">
+    <strong>Role Enforcement:</strong> The backend reads <code>cognito:groups</code> to determine the user's role. CMO users are filtered to their own organization using <code>custom:organization</code> — this is enforced server-side and cannot be bypassed by modifying query parameters.
+  </div>
+
+  <h3>Example: Obtain a Token (curl)</h3>
+  <pre><code># Initiate auth to get tokens
+aws cognito-idp initiate-auth \
+  --client-id 2eitutbi1gkogudchaudb9rtr4 \
+  --auth-flow USER_PASSWORD_AUTH \
+  --auth-parameters USERNAME=merck-admin@pharma-exchange.demo,PASSWORD=MerckAdmin2026! \
+  --region us-east-1
+
+# Use the IdToken from the response:
+TOKEN="eyJraWQiOi..."
+
+# Make an API call
+curl -H "Authorization: Bearer $TOKEN" \
+  https://4841ud8xri.execute-api.us-east-1.amazonaws.com/prod/api/cmo</code></pre>
+
+  <hr>
+
+  <h2>CMO Management</h2>
+
+  <h3>Register CMO</h3>
+  <p><span class="method post">POST</span> <code>/api/cmo/register</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "organizationName": "Lonza AG",
+  "contactEmail": "operations@lonza-pharma.com",
+  "contactPhone": "555-0100",
+  "address": "Münchensteinerstrasse 38, 4002 Basel, Switzerland",
+  "gxpCertified": true
+}</code></pre>
+  <h4>Response</h4>
+  <pre><code>{
+  "message": "CMO registered successfully",
+  "cmoId": "cmo-9e779df7",
+  "status": "active"
+}</code></pre>
+
+  <h3>List CMOs</h3>
+  <p><span class="method get">GET</span> <code>/api/cmo</code></p>
+  <p><strong>Role:</strong> both (CMO users filtered to their own org)</p>
+  <h4>Response</h4>
+  <pre><code>[
+  {
+    "cmoId": "cmo-9e779df7",
+    "organizationName": "Lonza AG",
+    "contactEmail": "operations@lonza-pharma.com",
+    "status": "active",
+    "gxpCertified": true
+  }
+]</code></pre>
+
+  <h3>Update CMO</h3>
+  <p><span class="method put">PUT</span> <code>/api/cmo/{cmoId}</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+
+  <h3>Deactivate CMO</h3>
+  <p><span class="method delete">DELETE</span> <code>/api/cmo/{cmoId}</code></p>
+  <p><strong>Role:</strong> merck-admins (soft delete — sets <code>status: inactive</code>)</p>
+
+  <h3>Invite CMO User</h3>
+  <p><span class="method post">POST</span> <code>/api/cmo/{cmoId}/invite</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "email": "cmo-rep@lonza.com",
+  "firstName": "Maria",
+  "lastName": "Schmidt"
+}</code></pre>
+  <h4>What It Does</h4>
+  <ol>
+    <li>Creates Cognito user with temporary password</li>
+    <li>Assigns user to <code>cmo-users</code> group</li>
+    <li>Sets <code>custom:organization = {cmoId}</code></li>
+    <li>Cognito sends email with temporary credentials</li>
+  </ol>
+
+  <hr>
+
+  <h2>Data Contracts</h2>
+
+  <h3>Create Contract</h3>
+  <p><span class="method post">POST</span> <code>/api/contract</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "cmoId": "cmo-9e779df7",
+  "dataDomain": "batch-records",
+  "productId": "prod-ibu200",
+  "connectionId": "conn-828942c15e01",
+  "schemaId": "schema-batch-records",
+  "schemaVersion": "1",
+  "qualityRules": [
+    {
+      "ruleId": "completeness-check",
+      "ruleName": "Completeness Check",
+      "ruleType": "completeness",
+      "expression": "completeness >= 95%",
+      "threshold": 95,
+      "severity": "error"
+    }
+  ],
+  "sla": {
+    "timeliness": { "maxLatencyHours": 24 },
+    "availability": { "uptimePercent": 99.5 },
+    "quality": { "minQualityScore": 95 }
+  },
+  "deliverySchedule": {
+    "frequency": "daily",
+    "timezone": "America/New_York"
+  },
+  "governance": {
+    "classification": "confidential",
+    "retentionYears": 7,
+    "encryptionRequired": true,
+    "piiFields": []
+  },
+  "elementSlas": [
+    { "elementType": "BMR", "maxDaysAfterBatch": 5 },
+    { "elementType": "CoA", "maxDaysAfterBatch": 5 },
+    { "elementType": "In-Process", "maxDaysAfterBatch": 2 },
+    { "elementType": "Yield", "maxDaysAfterBatch": 5 }
+  ]
+}</code></pre>
+  <h4>Response</h4>
+  <pre><code>{
+  "message": "Contract created",
+  "contractId": "CMO-CMO-9E779DF7-BATCH-RECORDS-001",
+  "status": "draft"
+}</code></pre>
+
+  <h3>List Contracts</h3>
+  <p><span class="method get">GET</span> <code>/api/contract</code></p>
+  <p><strong>Role:</strong> both (CMO users filtered by <code>custom:organization</code> JWT claim)</p>
+  <p><strong>Query params:</strong> <code>?cmoId=</code> (optional, Merck admin only)</p>
+
+  <h3>Get Contract</h3>
+  <p><span class="method get">GET</span> <code>/api/contract/{contractId}</code></p>
+
+  <h3>Update Contract</h3>
+  <p><span class="method put">PUT</span> <code>/api/contract/{contractId}</code></p>
+  <p><strong>Role:</strong> merck-admins (draft status only)</p>
+
+  <h3>Contract Workflow Actions</h3>
+  <table>
+    <tr><th>Action</th><th>Method</th><th>Role</th><th>Transition</th></tr>
+    <tr><td>Submit to CMO</td><td><span class="method post">POST</span> <code>/api/contract/{id}/submit</code></td><td>merck-admins</td><td>draft → pending_cmo_review</td></tr>
+    <tr><td>CMO Accepts</td><td><span class="method post">POST</span> <code>/api/contract/{id}/accept</code></td><td>cmo-users</td><td>pending_cmo_review → pending_merck_approval</td></tr>
+    <tr><td>Merck Approves</td><td><span class="method post">POST</span> <code>/api/contract/{id}/approve</code></td><td>merck-admins</td><td>pending_merck_approval → active</td></tr>
+    <tr><td>Reject</td><td><span class="method post">POST</span> <code>/api/contract/{id}/reject</code></td><td>both</td><td>any → rejected</td></tr>
+  </table>
+
+  <h3>Pipeline Status</h3>
+  <p><span class="method get">GET</span> <code>/api/contract/{contractId}/status</code></p>
+  <p>Returns real-time pipeline execution data based on the contract's connection type:</p>
+  <pre><code>// SFTP pipeline response
+{
+  "contractId": "CMO-LONZA-BATCH-RECORDS-001",
+  "status": "active",
+  "integrationPattern": "secure-transfer",
+  "executionDetails": {
+    "lastFile": "batch-data-001.csv",
+    "lastFileSize": 2048,
+    "lastReceivedAt": "2026-04-28T14:33:00Z",
+    "totalFilesReceived": 5,
+    "bronzePath": "bronze/cmo-9e779df7/batch-records/"
+  }
+}
+
+// Native connector pipeline response
+{
+  "contractId": "CMO-LONZA-ERP-YIELD-001",
+  "status": "active",
+  "integrationPattern": "native-connector",
+  "executionDetails": {
+    "glueConnectionName": "cmo-9e779df7-lonza-oracle-erp",
+    "lastRunStatus": "SUCCEEDED",
+    "lastRunStartTime": "2026-05-22T02:00:00Z",
+    "lastRunDuration": "45s",
+    "rowsExtracted": 1250
+  }
+}</code></pre>
+
+  <hr>
+
+  <h2>Connections</h2>
+
+  <h3>Create Connection</h3>
+  <p><span class="method post">POST</span> <code>/api/connection</code></p>
+  <p><strong>Role:</strong> merck-admins (SFTP/AI) or cmo-users (native-connector self-service)</p>
+  <h4>Request (SFTP)</h4>
+  <pre><code>{
+  "cmoId": "cmo-9e779df7",
+  "name": "Lonza SFTP Feed",
+  "connectionType": "secure-transfer"
+}</code></pre>
+  <h4>Request (Native Connector — CMO self-service)</h4>
+  <pre><code>{
+  "cmoId": "cmo-9e779df7",
+  "name": "Lonza Oracle ERP",
+  "connectionType": "native-connector",
+  "config": {
+    "dbType": "oracle",
+    "connectionMethod": "privatelink",
+    "host": "vpce-xxx.us-east-1.vpce.amazonaws.com",
+    "port": 1521,
+    "database": "PHARMA_PROD",
+    "username": "lonza_readonly",
+    "password": "SecurePass123!",
+    "privateLinkServiceName": "com.amazonaws.vpce.us-east-1.vpce-svc-xxxxx",
+    "tableMappings": [
+      { "sourceTable": "BATCH_RECORDS", "dataDomain": "batch-records" },
+      { "sourceTable": "COA_RESULTS", "dataDomain": "coa-data" }
+    ]
+  }
+}</code></pre>
+
+  <h3>List Connections</h3>
+  <p><span class="method get">GET</span> <code>/api/connection?cmoId={cmoId}</code></p>
+  <p><strong>Role:</strong> both (CMO users filtered by JWT)</p>
+
+  <h3>Get Connection</h3>
+  <p><span class="method get">GET</span> <code>/api/connection/{connectionId}</code></p>
+
+  <h3>Activate Connection</h3>
+  <p><span class="method post">POST</span> <code>/api/connection/{connectionId}/activate</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <h4>What Happens on Activate (by type)</h4>
+  <table>
+    <tr><th>Type</th><th>Actions</th></tr>
+    <tr><td>secure-transfer</td><td>Generates username + 24-char password → stores in Secrets Manager → returns SFTP credentials</td></tr>
+    <tr><td>ai-unstructured</td><td>Configures upload endpoint, supported formats, confidence threshold</td></tr>
+    <tr><td>native-connector</td><td>Reads creds from Secrets Manager → creates AWS Glue Connection (JDBC) → creates Glue ETL Job + daily Trigger per table mapping</td></tr>
+  </table>
+
+  <h4>Response (SFTP activate)</h4>
+  <pre><code>{
+  "message": "Connection activated",
+  "connectionId": "conn-828942c15e01",
+  "status": "active",
+  "config": {
+    "hostname": "s-89e811043fec4d7d8.server.transfer.us-east-1.amazonaws.com",
+    "port": 22,
+    "username": "cmo-9e779df7-batch-records",
+    "password": "xK9mP2qR7wL4nB8vJ3cY6hA1"
+  }
+}</code></pre>
+
+  <h4>Response (Native connector activate)</h4>
+  <pre><code>{
+  "message": "Connection activated",
+  "connectionId": "conn-88e64630f96b",
+  "status": "active",
+  "config": {
+    "glueConnectionName": "cmo-9e779df7-lonza-oracle-erp",
+    "jdbcUrl": "jdbc:oracle:thin:@vpce-xxx:1521:PHARMA_PROD",
+    "glueJobs": [
+      { "jobName": "cmo-9e779df7-batch-records-etl", "dataDomain": "batch-records", "schedule": "cron(0 2 * * ? *)" },
+      { "jobName": "cmo-9e779df7-coa-data-etl", "dataDomain": "coa-data", "schedule": "cron(0 2 * * ? *)" }
+    ]
+  }
+}</code></pre>
+
+  <h3>Upload File (AI Pattern)</h3>
+  <p><span class="method post">POST</span> <code>/api/connection/{connectionId}/upload?filename={name}&amp;batchId={id}&amp;elementType={type}&amp;lotNumber={lot}</code></p>
+  <p><strong>Role:</strong> cmo-users</p>
+  <p><strong>Content-Type:</strong> multipart/form-data</p>
+  <p>Uploads a document (PDF/image) for AI processing. The file is stored in S3 and triggers Textract (PDF) or Rekognition (image). The batch element is automatically marked as received.</p>
+
+  <hr>
+
+  <h2>Products</h2>
+
+  <h3>Create Product</h3>
+  <p><span class="method post">POST</span> <code>/api/product</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "cmoId": "cmo-9e779df7",
+  "name": "Ibuprofen 200mg Tablets",
+  "strength": "200mg",
+  "dosageForm": "Tablet",
+  "ndcCode": "0573-0168-01",
+  "description": "OTC analgesic"
+}</code></pre>
+
+  <h3>List Products</h3>
+  <p><span class="method get">GET</span> <code>/api/product?cmoId={cmoId}</code></p>
+  <p><strong>Role:</strong> both (CMO users filtered by JWT)</p>
+
+  <h3>Get/Update Product</h3>
+  <p><span class="method get">GET</span> / <span class="method put">PUT</span> <code>/api/product/{productId}</code></p>
+
+  <hr>
+
+  <h2>Batches</h2>
+
+  <h3>Create Batch</h3>
+  <p><span class="method post">POST</span> <code>/api/batch</code></p>
+  <p><strong>Role:</strong> cmo-users</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "cmoId": "cmo-9e779df7",
+  "productId": "prod-ibu200",
+  "lotNumber": "LOT-LNZ-2026-007",
+  "manufacturingDate": "2026-05-20",
+  "notes": "Production batch for North American market"
+}</code></pre>
+  <h4>Response</h4>
+  <pre><code>{
+  "message": "Batch created",
+  "batchId": "batch-a1b2c3d4",
+  "status": "in_progress",
+  "dataElements": [
+    { "elementType": "BMR", "received": false, "receivedAt": null, "s3Path": null, "overdue": false },
+    { "elementType": "CoA", "received": false, "receivedAt": null, "s3Path": null, "overdue": false },
+    { "elementType": "In-Process", "received": false, "receivedAt": null, "s3Path": null, "overdue": false },
+    { "elementType": "Yield", "received": false, "receivedAt": null, "s3Path": null, "overdue": false }
+  ]
+}</code></pre>
+
+  <h3>List Batches</h3>
+  <p><span class="method get">GET</span> <code>/api/batch?cmoId={cmoId}&amp;productId={productId}</code></p>
+  <p><strong>Role:</strong> both (CMO users filtered by JWT)</p>
+
+  <h3>Get Batch</h3>
+  <p><span class="method get">GET</span> <code>/api/batch/{batchId}</code></p>
+
+  <h3>Update Batch (Mark Element Received)</h3>
+  <p><span class="method put">PUT</span> <code>/api/batch/{batchId}</code></p>
+  <h4>Request</h4>
+  <pre><code>{
+  "elementType": "CoA",
+  "received": true
+}</code></pre>
+
+  <h3>Submit Batch</h3>
+  <p><span class="method post">POST</span> <code>/api/batch/{batchId}/submit</code></p>
+  <p><strong>Role:</strong> cmo-users (marks batch as fully submitted — requires all 4 elements received)</p>
+
+  <h3>Get Batch Connections</h3>
+  <p><span class="method get">GET</span> <code>/api/batch/{batchId}/connections</code></p>
+  <p>Returns all active connections for the CMO that owns the batch. Used by the frontend to show upload options.</p>
+
+  <h3>View Element Data</h3>
+  <p><span class="method get">GET</span> <code>/api/batch/{batchId}/element/{elementType}/view</code></p>
+  <p>Returns the Textract-extracted JSON content for an AI-processed element. Used by the CoA viewer modal.</p>
+  <h4>Response</h4>
+  <pre><code>{
+  "confidence": 94.1,
+  "documentType": "Certificate of Analysis",
+  "header": {
+    "productName": "Ibuprofen 200mg Tablets",
+    "batchLot": "LOT-LNZ-2026-001",
+    "manufacturingDate": "2026-04-15",
+    "expiryDate": "2028-04-15",
+    "quantity": "50,000 tablets",
+    "disposition": "Released",
+    "analyst": "Dr. Maria Chen",
+    "qaApprover": "Dr. James Wilson"
+  },
+  "testResults": [
+    {
+      "test": "Dissolution",
+      "method": "USP <711>",
+      "specification": "NLT 80% in 30 min",
+      "result": "92%",
+      "unit": "%",
+      "status": "PASS"
+    },
+    {
+      "test": "Content Uniformity",
+      "method": "USP <905>",
+      "specification": "AV ≤ 15.0",
+      "result": "4.2",
+      "unit": "AV",
+      "status": "PASS"
+    }
+  ]
+}</code></pre>
+
+  <hr>
+
+  <h2>Schema Management</h2>
+
+  <h3>Create Schema</h3>
+  <p><span class="method post">POST</span> <code>/api/schema</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "cmoId": "cmo-9e779df7",
+  "name": "Batch Manufacturing Records",
+  "fields": [
+    { "name": "lot_number", "type": "string", "required": true },
+    { "name": "product_name", "type": "string", "required": true },
+    { "name": "quantity", "type": "integer", "required": true },
+    { "name": "manufacturing_date", "type": "date", "required": true },
+    { "name": "expiry_date", "type": "date", "required": true },
+    { "name": "yield_percent", "type": "number", "required": false }
+  ]
+}</code></pre>
+
+  <h3>Infer Schema from File</h3>
+  <p><span class="method post">POST</span> <code>/api/schema/infer</code></p>
+  <p><strong>Content-Type:</strong> multipart/form-data (upload a CSV or JSON sample file)</p>
+  <h4>Response</h4>
+  <pre><code>{
+  "inferredFields": [
+    { "name": "lot_number", "type": "string", "required": true },
+    { "name": "quantity", "type": "integer", "required": true },
+    { "name": "manufacturing_date", "type": "timestamp", "required": true }
+  ],
+  "rowCount": 5,
+  "fileFormat": "csv"
+}</code></pre>
+
+  <h3>Register Schema in Glue</h3>
+  <p><span class="method post">POST</span> <code>/api/schema/{schemaId}/register</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <p>Pushes the schema definition to AWS Glue Schema Registry with <code>BACKWARD</code> compatibility mode. Returns the Glue schema version number.</p>
+
+  <h3>List Schemas</h3>
+  <p><span class="method get">GET</span> <code>/api/schema?cmoId={cmoId}</code></p>
+
+  <h3>Update Schema</h3>
+  <p><span class="method put">PUT</span> <code>/api/schema/{schemaId}</code></p>
+  <p>If the schema was previously <code>registered</code>, updating fields resets status to <code>draft</code>.</p>
+
+  <hr>
+
+  <h2>SLA Check</h2>
+
+  <h3>Run SLA Check (Manual)</h3>
+  <p><span class="method post">POST</span> <code>/api/sla-check</code></p>
+  <p><strong>Role:</strong> merck-admins</p>
+  <p>Scans all <code>in_progress</code> batches, compares element deadlines against current time, flags overdue elements. Also runs automatically via EventBridge daily at 6am UTC.</p>
+  <h4>Response</h4>
+  <pre><code>{
+  "message": "SLA check complete",
+  "batchesChecked": 6,
+  "elementsOverdue": 3
+}</code></pre>
+
+  <hr>
+
+  <h2>Natural Language Query</h2>
+
+  <h3>Query Data</h3>
+  <p><span class="method post">POST</span> <code>/api/query</code></p>
+  <p><strong>Role:</strong> both</p>
+  <h4>Request</h4>
+  <pre><code>{
+  "query": "Show me all overdue batches from Lonza in the last 30 days"
+}</code></pre>
+  <h4>Response</h4>
+  <pre><code>{
+  "sql": "SELECT * FROM batches WHERE cmo_id = 'cmo-9e779df7' AND ...",
+  "results": [...],
+  "rowCount": 3
+}</code></pre>
+
+  <hr>
+
+  <h2>Architecture</h2>
+
+  <pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│                         PHARMA DATA EXCHANGE HUB                        │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌──────────┐    ┌─────────────┐    ┌─────────────┐                   │
+│  │  Amplify  │───▶│ API Gateway │───▶│   Lambda    │                   │
+│  │ (React)   │    │ (Cognito    │    │ (Handlers)  │                   │
+│  └──────────┘    │  Authorizer)│    └──────┬──────┘                   │
+│                  └─────────────┘           │                           │
+│                                            ▼                           │
+│  ┌─────────────────────────────────────────────────────────────────┐  │
+│  │                        DATA LAYER                                │  │
+│  │  ┌──────────┐  ┌──────────┐  ┌────────────┐  ┌──────────────┐  │  │
+│  │  │ DynamoDB │  │    S3    │  │   Glue     │  │   Secrets    │  │  │
+│  │  │ (6 tbls) │  │ (Bronze/ │  │ (Registry/ │  │   Manager    │  │  │
+│  │  │          │  │ Silver/  │  │ Connection/│  │ (Credentials)│  │  │
+│  │  │          │  │  Gold)   │  │  ETL Jobs) │  │              │  │  │
+│  │  └──────────┘  └──────────┘  └────────────┘  └──────────────┘  │  │
+│  └─────────────────────────────────────────────────────────────────┘  │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐  │
+│  │                    INGESTION PATTERNS                            │  │
+│  │                                                                   │  │
+│  │  Pattern 1          Pattern 2          Pattern 3                  │  │
+│  │  ┌──────────┐      ┌──────────┐      ┌──────────────┐           │  │
+│  │  │  Glue    │      │ Transfer │      │  Textract /  │           │  │
+│  │  │  JDBC +  │      │  Family  │      │ Rekognition  │           │  │
+│  │  │ ETL Jobs │      │  (SFTP)  │      │  (AI Async)  │           │  │
+│  │  └──────────┘      └──────────┘      └──────────────┘           │  │
+│  └─────────────────────────────────────────────────────────────────┘  │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐  │
+│  │                    GOVERNANCE & MONITORING                       │  │
+│  │  Cognito │ KMS │ CloudTrail │ EventBridge │ CloudWatch │ Bedrock │  │
+│  └─────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+  <h2>DynamoDB Tables</h2>
+  <table>
+    <tr><th>Table</th><th>Primary Key</th><th>GSIs</th><th>Purpose</th></tr>
+    <tr><td><code>cmo-profiles</code></td><td>cmoId</td><td>—</td><td>CMO organizations</td></tr>
+    <tr><td><code>data-contracts</code></td><td>contractId</td><td>cmo-contracts-index (cmoId)</td><td>Data contracts with SLAs</td></tr>
+    <tr><td><code>products</code></td><td>productId</td><td>cmo-products-index (cmoId)</td><td>Drug products</td></tr>
+    <tr><td><code>batches</code></td><td>batchId</td><td>cmo-batches-index (cmoId+status), product-batches-index (productId+mfgDate)</td><td>Manufacturing batches</td></tr>
+    <tr><td><code>connections</code></td><td>connectionId</td><td>cmo-connections-index (cmoId)</td><td>Integration connections</td></tr>
+    <tr><td><code>schemas</code></td><td>schemaId</td><td>cmo-schemas-index (cmoId)</td><td>Data schemas</td></tr>
+  </table>
+
+  <h2>CloudFormation Stacks</h2>
+  <table>
+    <tr><th>Stack</th><th>Resources</th></tr>
+    <tr><td>PharmaDataExchangeCognitoStack</td><td>Cognito User Pool, groups, hosted UI</td></tr>
+    <tr><td>PharmaDataExchangeDatabaseStack</td><td>All 6 DynamoDB tables + GSIs</td></tr>
+    <tr><td>PharmaDataExchangeDataLakeStack</td><td>S3 bucket (Bronze/Silver/Gold), KMS key</td></tr>
+    <tr><td>PharmaDataExchangeContractApiStack</td><td>API Gateway, all Lambda functions, IAM roles</td></tr>
+    <tr><td>PharmaDataExchangeSFTPIngestionStack</td><td>Transfer Family SFTP server, auth Lambda, processor Lambda</td></tr>
+    <tr><td>PharmaDataExchangeSchemaApiStack</td><td>Schema Registry API (legacy)</td></tr>
+    <tr><td>PharmaDataExchangeNLQueryStack</td><td>Bedrock NL Query API</td></tr>
+    <tr><td>PharmaDataExchangePipelineOrchestrationStack</td><td>Step Functions state machine</td></tr>
+    <tr><td>PharmaDataExchangeSecurityStack</td><td>KMS keys, Lake Formation</td></tr>
+    <tr><td>PharmaDataExchangeAuditComplianceStack</td><td>CloudTrail</td></tr>
+    <tr><td>PharmaDataExchangeMonitoringStack</td><td>CloudWatch dashboard, alarms</td></tr>
+  </table>
+
+  <h2>Security</h2>
+
+  <h3>Authentication & Authorization</h3>
+  <table>
+    <tr><th>Control</th><th>Implementation</th></tr>
+    <tr><td>User Authentication</td><td>Amazon Cognito User Pool with hosted UI (OAuth 2.0 + OIDC)</td></tr>
+    <tr><td>API Authorization</td><td>Cognito JWT Authorizer on API Gateway — validates token before Lambda runs</td></tr>
+    <tr><td>Role-Based Access</td><td>Cognito Groups (merck-admins, cmo-users) checked in Lambda handler</td></tr>
+    <tr><td>Data Isolation</td><td><code>custom:organization</code> JWT claim enforced server-side on all list/get operations</td></tr>
+    <tr><td>Credential Storage</td><td>AWS Secrets Manager (SFTP passwords, DB credentials) — never in DynamoDB or logs</td></tr>
+  </table>
+
+  <h3>Encryption</h3>
+  <table>
+    <tr><th>Data</th><th>Method</th></tr>
+    <tr><td>S3 (data lake)</td><td>SSE-KMS with customer-managed key</td></tr>
+    <tr><td>DynamoDB</td><td>AWS-owned encryption</td></tr>
+    <tr><td>Secrets Manager</td><td>KMS encryption</td></tr>
+    <tr><td>In-transit</td><td>TLS 1.2+ (API Gateway, SFTP, S3)</td></tr>
+  </table>
+
+  <h3>Audit & Compliance</h3>
+  <table>
+    <tr><th>Capability</th><th>Service</th></tr>
+    <tr><td>API call audit trail</td><td>AWS CloudTrail (all management + data events)</td></tr>
+    <tr><td>Contract workflow audit</td><td>DynamoDB fields: submitted_by, submitted_at, accepted_by, accepted_at, approved_by, approved_at</td></tr>
+    <tr><td>Data lake immutability</td><td>S3 Bronze layer — original files never modified</td></tr>
+    <tr><td>PII detection</td><td>Amazon Macie (available, not currently active)</td></tr>
+  </table>
+
+  <h2>Error Responses</h2>
+  <p>All API errors follow this format:</p>
+  <pre><code>{
+  "error": "Description of what went wrong",
+  "statusCode": 400
+}</code></pre>
+
+  <table>
+    <tr><th>Status Code</th><th>Meaning</th><th>Common Causes</th></tr>
+    <tr><td>400</td><td>Bad Request</td><td>Missing required fields, invalid status transition</td></tr>
+    <tr><td>403</td><td>Forbidden</td><td>Wrong role (CMO trying admin action), missing <code>custom:organization</code></td></tr>
+    <tr><td>404</td><td>Not Found</td><td>Invalid contractId, batchId, etc.</td></tr>
+    <tr><td>500</td><td>Internal Server Error</td><td>Lambda runtime error — check CloudWatch logs</td></tr>
+  </table>
+
+  <h2>Deployment</h2>
+
+  <h3>Backend</h3>
+  <pre><code>cd cdk
+cp -r services models utils lambdas lambda_src/
+find lambda_src -name "__pycache__" -type d -exec rm -rf {} +
+cdk deploy --all --require-approval never</code></pre>
+
+  <h3>Frontend</h3>
+  <pre><code>cd frontend
+npm run build
+python3 deploy_amplify.py</code></pre>
+
+  <h3>Environment</h3>
+  <table>
+    <tr><th>Variable</th><th>Location</th><th>Value</th></tr>
+    <tr><td>VITE_CONTRACT_API_URL</td><td>frontend/.env.production</td><td>https://4841ud8xri.execute-api.us-east-1.amazonaws.com/prod</td></tr>
+    <tr><td>VITE_SCHEMA_API_URL</td><td>frontend/.env.production</td><td>https://ootbzgzcp0.execute-api.us-east-1.amazonaws.com/prod</td></tr>
+    <tr><td>VITE_NL_QUERY_API_URL</td><td>frontend/.env.production</td><td>https://u02uvpqhg1.execute-api.us-east-1.amazonaws.com/prod</td></tr>
+    <tr><td>VITE_USER_POOL_ID</td><td>frontend/.env.production</td><td>us-east-1_uT79YqQ5x</td></tr>
+    <tr><td>VITE_USER_POOL_CLIENT_ID</td><td>frontend/.env.production</td><td>2eitutbi1gkogudchaudb9rtr4</td></tr>
+  </table>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "a2db8a1945e61c00bfe629cf65ab51bda979eded2bf5b34079961c676c6d3a05": {
+      "source": {
+        "path": "PharmaDataExchangeAuditComplianceStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "550129454303-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-550129454303-us-east-1",
+          "objectKey": "a2db8a1945e61c00bfe629cf65ab51bda979eded2bf5b34079961c676c6d3a05.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::550129454303:role/cdk-hnb659fds-file-publishing-role-550129454303-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

@@ -1,0 +1,29 @@
+data_contract:
+  version: "1.0"
+  cmo_id: "cmo-alpha"
+  data_domain: "batch-manufacturing"
+  
+  schema:
+    fields:
+      - name: batch_id
+        type: string
+        required: true
+        unique: true
+      - name: yield_percentage
+        type: decimal
+        min: 0
+        max: 100
+  
+  data_quality:
+    completeness: 100%
+    uniqueness: [batch_id]
+    timeliness: "< 24 hours"
+  
+  delivery:
+    frequency: "daily"
+    schedule: "02:00 UTC"
+    format: "parquet"
+  
+  mapping:
+    lot_number: batch_id
+    yield_pct: yield_percentage

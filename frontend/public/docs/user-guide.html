@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharma Data Exchange Hub - User Guide</title>
+  <style>
+    body { font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 40px 20px; color: #16191f; line-height: 1.6; }
+    h1 { color: #0972d3; border-bottom: 2px solid #0972d3; padding-bottom: 8px; }
+    h2 { color: #232f3e; margin-top: 32px; }
+    h3 { color: #545b64; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #d5dbdb; padding: 8px 12px; text-align: left; }
+    th { background: #232f3e; color: white; }
+    tr:nth-child(even) { background: #f2f3f3; }
+    code { background: #f2f3f3; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+    pre { background: #232f3e; color: #d5dbdb; padding: 16px; border-radius: 4px; overflow-x: auto; }
+    pre code { background: none; color: inherit; }
+    .nav { background: #232f3e; color: white; padding: 12px 20px; margin: -40px -20px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .nav a { color: #0972d3; text-decoration: none; margin-left: 16px; }
+    .nav a:hover { text-decoration: underline; }
+    .btn { display: inline-block; background: #0972d3; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; margin: 8px 4px 8px 0; }
+    .btn:hover { background: #065299; }
+    .callout { background: #f2f8fd; border-left: 4px solid #0972d3; padding: 12px 16px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+    .callout-warn { background: #fef8f0; border-left-color: #d97706; }
+    .flow { background: #f2f3f3; padding: 16px; border-radius: 4px; font-family: monospace; white-space: pre; line-height: 1.8; margin: 16px 0; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: bold; color: white; }
+    .badge-green { background: #037f0c; }
+    .badge-blue { background: #0972d3; }
+    .badge-orange { background: #d97706; }
+    .badge-red { background: #d91515; }
+    @media print { .nav, .btn { display: none; } body { max-width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <strong>Pharma Data Exchange Hub</strong>
+    <div>
+      <a href="/docs/user-guide.html">User Guide</a>
+      <a href="/docs/api-guide.html">API Guide</a>
+      <a href="/">Portal</a>
+    </div>
+  </div>
+
+  <h1>User Guide</h1>
+  <p><a class="btn" href="javascript:window.print()">Export to PDF</a></p>
+
+  <h2>Overview</h2>
+  <p>The Pharma Data Exchange Hub is a self-service platform that enables pharmaceutical companies (Merck) to securely receive manufacturing data from Contract Manufacturing Organizations (CMOs). It reduces CMO onboarding time from <strong>3–6 months to 1–4 weeks</strong> through standardized integration patterns, automated schema validation, and SLA compliance tracking.</p>
+
+  <div class="callout">
+    <strong>Key Outcomes:</strong> 90% reduction in integration time • 90% reduction in Merck effort per CMO • 100% CMO coverage through 3 flexible patterns • 80% automation in document processing • Natural language queries across all CMO data
+  </div>
+
+  <h2>Two User Roles</h2>
+  <table>
+    <tr><th>Role</th><th>Description</th><th>Key Actions</th></tr>
+    <tr><td><strong>Merck Admin</strong></td><td>Internal platform administrator managing CMOs, contracts, and compliance</td><td>Register CMOs, create products, provision connections, define schemas, manage contracts, monitor SLA compliance</td></tr>
+    <tr><td><strong>CMO Representative</strong></td><td>External manufacturing partner submitting data to Merck</td><td>Review/accept contracts, configure database connections, create batches, upload documents, track submissions</td></tr>
+  </table>
+
+  <h2>Platform Pages</h2>
+
+  <h3>Merck Admin Navigation</h3>
+  <table>
+    <tr><th>Page</th><th>Purpose</th></tr>
+    <tr><td>Dashboard</td><td>SLA compliance overview — active contracts, batch completeness, overdue elements across all CMOs</td></tr>
+    <tr><td>CMO Partners</td><td>List of all registered CMOs with actions (invite user, create contract, edit, deactivate)</td></tr>
+    <tr><td>Register New CMO</td><td>Onboard a new CMO organization</td></tr>
+    <tr><td>Products</td><td>Manage drug products assigned to CMOs</td></tr>
+    <tr><td>Connections</td><td>All integration connections across CMOs (SFTP, AI, Native Connector)</td></tr>
+    <tr><td>Data Contracts</td><td>All contracts with approval status and SLA configuration</td></tr>
+    <tr><td>Batches</td><td>All batch submissions across CMOs with completeness tracking</td></tr>
+    <tr><td>Schema Management</td><td>Create, infer, and register data schemas in AWS Glue</td></tr>
+    <tr><td>Pipelines</td><td>Real-time pipeline execution status per contract</td></tr>
+    <tr><td>Natural Language Query</td><td>Ask questions about CMO data in plain English (powered by Amazon Bedrock)</td></tr>
+  </table>
+
+  <h3>CMO User Navigation</h3>
+  <table>
+    <tr><th>Page</th><th>Purpose</th></tr>
+    <tr><td>Dashboard</td><td>Batch completeness for your organization only</td></tr>
+    <tr><td>My Connections</td><td>Your integration connections (SFTP credentials, DB connections, AI upload)</td></tr>
+    <tr><td>My Contracts</td><td>Contracts assigned to your organization — accept/reject workflow</td></tr>
+    <tr><td>Batches</td><td>Create batches, upload data elements, track completeness</td></tr>
+    <tr><td>Schema Management</td><td>View schemas defined for your organization</td></tr>
+    <tr><td>Pipelines</td><td>Pipeline status for your active contracts</td></tr>
+  </table>
+
+  <h2>Complete Onboarding Workflow</h2>
+  <p>The correct sequence for adding a new CMO to the platform:</p>
+
+  <div class="flow">Step 1: Register CMO                    [Merck Admin]
+Step 2: Create Product(s)               [Merck Admin]
+Step 3: Create Connection(s)            [Merck Admin or CMO]
+Step 4: Activate Connection(s)          [Merck Admin]
+Step 5: Create / Infer Schema(s)        [Merck Admin]
+Step 6: Register Schema in Glue         [Merck Admin]
+Step 7: Create Data Contract            [Merck Admin]
+Step 8: Submit Contract to CMO          [Merck Admin]
+Step 9: Invite CMO User                 [Merck Admin]
+Step 10: CMO Reviews & Accepts Contract [CMO User]
+Step 11: Merck Approves → Active        [Merck Admin]
+Step 12: CMO Creates Batches & Submits  [CMO User]
+Step 13: Monitor SLA Compliance         [Merck Admin]</div>
+
+  <h2>Contract Approval Workflow</h2>
+  <p>Every data contract goes through a formal approval process with both parties:</p>
+
+  <div class="flow">draft → pending_cmo_review → pending_merck_approval → active
+                ↘ rejected (by CMO)       ↘ rejected (by Merck)</div>
+
+  <table>
+    <tr><th>Status</th><th>Merck Admin Can</th><th>CMO User Can</th></tr>
+    <tr><td><span class="badge badge-blue">draft</span></td><td>Edit, Submit to CMO</td><td>—</td></tr>
+    <tr><td><span class="badge badge-orange">pending_cmo_review</span></td><td>Reject</td><td>Accept or Reject</td></tr>
+    <tr><td><span class="badge badge-orange">pending_merck_approval</span></td><td>Approve & Activate, Reject</td><td>—</td></tr>
+    <tr><td><span class="badge badge-green">active</span></td><td>View only</td><td>View only</td></tr>
+    <tr><td><span class="badge badge-red">rejected</span></td><td>View only</td><td>View only</td></tr>
+  </table>
+
+  <h2>Three Integration Patterns</h2>
+  <p>Every CMO can use one or more of these patterns depending on their technical capabilities:</p>
+
+  <h3>Pattern 1: Native Database Connectors</h3>
+  <table>
+    <tr><th>Aspect</th><th>Detail</th></tr>
+    <tr><td>Use Case</td><td>CMOs with modern databases (Oracle, SQL Server, PostgreSQL, MySQL, Snowflake, SAP HANA)</td></tr>
+    <tr><td>How It Works</td><td>CMO submits DB credentials → Merck reviews → Merck activates → AWS Glue Connection + ETL Job created</td></tr>
+    <tr><td>Data Flow</td><td>Glue ETL Job runs on daily schedule (2am UTC) → extracts data via JDBC → writes Parquet to Bronze S3 layer</td></tr>
+    <tr><td>Connectivity</td><td>Direct (public/VPN), NLB (Network Load Balancer), or AWS PrivateLink (most secure)</td></tr>
+    <tr><td>Multi-Table</td><td>One connection can have multiple table mappings — each gets its own Glue job and data domain</td></tr>
+    <tr><td>CMO Effort</td><td>Fill in a form with DB details + table mappings. No AWS account needed.</td></tr>
+  </table>
+
+  <h3>Pattern 2: Secure File Transfer (SFTP)</h3>
+  <table>
+    <tr><th>Aspect</th><th>Detail</th></tr>
+    <tr><td>Use Case</td><td>CMOs with legacy systems, on-premise infrastructure, or no cloud — universal fallback (100% coverage)</td></tr>
+    <tr><td>How It Works</td><td>Merck activates SFTP → credentials generated → CMO uses any SFTP client (FileZilla, WinSCP, CLI)</td></tr>
+    <tr><td>Data Flow</td><td>CMO uploads file → lands in S3 incoming → Lambda processes → moved to date+lot partitioned Bronze path</td></tr>
+    <tr><td>Supported Formats</td><td>CSV, JSON, Parquet (other extensions stay in incoming/)</td></tr>
+    <tr><td>Upload Path</td><td><code>/{batchId}/{elementType}/{filename}</code> — automatically tags files to the correct batch and element</td></tr>
+    <tr><td>CMO Effort</td><td>Connect via standard SFTP client with provided credentials. No AWS account or SDK needed.</td></tr>
+  </table>
+
+  <h3>Pattern 3: AI-Powered Unstructured Data</h3>
+  <table>
+    <tr><th>Aspect</th><th>Detail</th></tr>
+    <tr><td>Use Case</td><td>CMOs submitting PDFs (Certificates of Analysis, batch records) or images (defect photos, labels)</td></tr>
+    <tr><td>How It Works</td><td>CMO uploads document from Batch Detail page → AI extracts structured data → results saved to Bronze</td></tr>
+    <tr><td>Data Flow</td><td>Upload → S3 → Textract (PDFs, multi-page) or Rekognition (images) → JSON result in Bronze layer</td></tr>
+    <tr><td>Confidence Routing</td><td>≥85% confidence → auto-processed to Bronze layer | <85% → routed to manual-review prefix</td></tr>
+    <tr><td>Supported Formats</td><td>PDF (.pdf), Images (.png, .jpg, .jpeg, .tiff)</td></tr>
+    <tr><td>CMO Effort</td><td>Click "Upload" on Batch Detail page and select a file. Results viewable immediately in the portal.</td></tr>
+  </table>
+
+  <h2>S3 Data Lake Path Convention</h2>
+  <p>All ingested data lands in the Bronze layer with a consistent, queryable path structure:</p>
+  <pre><code>bronze/{cmoId}/{dataDomain}/lot={lotNumber}/year=YYYY/month=MM/day=DD/{filename}</code></pre>
+  <p>The <code>lot=</code> partition uses the CMO's own lot number — the regulated identifier that appears on physical documents and in Merck's QMS. This enables direct Athena queries filtered by lot number without any joins.</p>
+
+  <h2>Connections</h2>
+
+  <h3>Connection Lifecycle</h3>
+  <div class="flow">pending → (CMO configures, for native connectors) → pending_merck_review → (Merck activates) → active</div>
+
+  <h3>Merck Admin Actions</h3>
+  <ul>
+    <li><strong>Create Connection</strong> — choose CMO + type (SFTP, AI, or Native Connector)</li>
+    <li><strong>Activate</strong> — provisions credentials (SFTP: Secrets Manager username/password; Native: Glue Connection + ETL Jobs; AI: configures upload endpoint)</li>
+    <li><strong>Review & Activate</strong> — for native connectors submitted by the CMO (reviews DB details, one-click activate)</li>
+  </ul>
+
+  <h3>CMO User Actions</h3>
+  <ul>
+    <li><strong>View My Connections</strong> — see all active connections with credentials and status</li>
+    <li><strong>Add Database Connection</strong> — self-service form for native connector (DB type, host, port, credentials, table mappings, PrivateLink)</li>
+  </ul>
+
+  <h3>Security Properties</h3>
+  <ul>
+    <li>SFTP passwords: generated randomly (24 chars), stored in AWS Secrets Manager only</li>
+    <li>Database credentials: CMO enters directly in portal → stored in Secrets Manager → never returned to frontend after initial save</li>
+    <li>Merck admin review: sees host/port/database/username but <strong>never</strong> the password</li>
+    <li>PrivateLink: traffic stays on AWS backbone, no public internet traversal</li>
+  </ul>
+
+  <h2>Schema Management</h2>
+  <p>Schemas define the expected structure of data from each CMO. They are stored in DynamoDB and registered in AWS Glue Schema Registry for validation.</p>
+
+  <h3>Schema Lifecycle</h3>
+  <div class="flow">Create (draft) → Register in Glue (registered) → Reference from Contract
+                       ↑
+            Edit (resets to draft if previously registered)</div>
+
+  <h3>Two Ways to Create a Schema</h3>
+  <table>
+    <tr><th>Method</th><th>How</th><th>When to Use</th></tr>
+    <tr><td>Manual Definition</td><td>Add fields one by one (name, type, required/optional)</td><td>You know the exact schema you want</td></tr>
+    <tr><td>File Inference</td><td>Upload a sample CSV or JSON → system auto-detects fields and types</td><td>You have a sample file and want to start quickly</td></tr>
+  </table>
+
+  <h3>Supported Field Types</h3>
+  <p><code>string</code>, <code>number</code>, <code>integer</code>, <code>boolean</code>, <code>date</code>, <code>timestamp</code>, <code>array</code>, <code>object</code></p>
+
+  <h2>Batch Management</h2>
+  <p>A <strong>batch</strong> represents a physical manufacturing event — identified by the CMO's lot number, linked to a product and a CMO. Each batch requires 4 data elements to be complete:</p>
+
+  <table>
+    <tr><th>Element</th><th>Description</th><th>Typical SLA</th></tr>
+    <tr><td>BMR (Batch Manufacturing Record)</td><td>Complete manufacturing process record</td><td>5 days after manufacturing</td></tr>
+    <tr><td>CoA (Certificate of Analysis)</td><td>Quality testing results and compliance certification</td><td>5 days after manufacturing</td></tr>
+    <tr><td>In-Process Controls</td><td>Measurements taken during manufacturing</td><td>1–2 days after manufacturing</td></tr>
+    <tr><td>Yield Data</td><td>Production output quantities and efficiency metrics</td><td>5 days after manufacturing</td></tr>
+  </table>
+
+  <h3>Batch Status Flow</h3>
+  <div class="flow">in_progress → (all 4 elements received) → submitted</div>
+
+  <h3>How CMO Submits Data per Batch</h3>
+  <p>From the Batch Detail page, the CMO has two options depending on their active connections:</p>
+  <ul>
+    <li><strong>SFTP:</strong> Upload files to the path shown on screen: <code>/{batchId}/{elementType}/{filename}</code>. The system auto-detects the element type and marks it as received.</li>
+    <li><strong>AI Upload:</strong> Click the "Upload" button next to an element → select a PDF or image → AI processes and marks element received.</li>
+    <li><strong>Manual mark:</strong> Click "Mark Received" for elements submitted through other channels.</li>
+  </ul>
+
+  <h2>CoA Document Viewer</h2>
+  <p>When a Certificate of Analysis is uploaded via the AI pattern, the extracted content is viewable directly in the portal:</p>
+  <ol>
+    <li>Navigate to Batch Detail → find the CoA element with status "Received"</li>
+    <li>Click the <strong>View</strong> button</li>
+    <li>A modal opens showing:</li>
+  </ol>
+  <ul>
+    <li><strong>Confidence badge</strong> — <span class="badge badge-green">≥85%</span> (auto-processed) or <span class="badge badge-red">&lt;85%</span> (manual review needed)</li>
+    <li><strong>Document header:</strong> Product Name, Batch/Lot Number, Manufacturing Date, Expiry Date, Quantity, Disposition, Analyst, QA Approver</li>
+    <li><strong>Test Results table:</strong> Each quality test with Method, Specification, Result, Unit, and <span class="badge badge-green">PASS</span>/<span class="badge badge-red">FAIL</span> status</li>
+  </ul>
+
+  <h2>SLA Tracking & Compliance</h2>
+  <p>Each contract defines per-element SLA deadlines (e.g., "CoA must arrive within 5 days of manufacturing date"). The platform actively monitors compliance:</p>
+
+  <h3>How SLA Tracking Works</h3>
+  <ol>
+    <li>Contract specifies <code>elementSlas</code>: e.g., <code>{"elementType": "CoA", "maxDaysAfterBatch": 5}</code></li>
+    <li>EventBridge triggers the SLA Checker Lambda daily at 6am UTC</li>
+    <li>For each in-progress batch: compares <code>manufacturingDate + maxDaysAfterBatch</code> vs. today</li>
+    <li>Unreceived elements past deadline are flagged as <strong>overdue</strong></li>
+    <li>Dashboard shows overdue counts, visual indicators, and filter by overdue status</li>
+  </ol>
+
+  <h3>Dashboard Features</h3>
+  <ul>
+    <li><strong>Summary cards:</strong> Active Contracts, Total Batches, Incomplete, Overdue</li>
+    <li><strong>Run SLA Check:</strong> Manual trigger for immediate check (in addition to daily auto-run)</li>
+    <li><strong>Filters:</strong> Filter by CMO, by status (has overdue elements, has missing elements)</li>
+    <li><strong>Click-through:</strong> Click any batch row to navigate directly to its detail page</li>
+  </ul>
+
+  <h2>Pipelines</h2>
+  <p>The Pipelines page shows real-time execution status for each active contract's data flow:</p>
+
+  <table>
+    <tr><th>Pattern</th><th>What You See</th></tr>
+    <tr><td>SFTP</td><td>Last file received (name, size, timestamp), total files in Bronze layer, S3 path</td></tr>
+    <tr><td>AI Unstructured</td><td>Documents processed count, manual review pending count, last processed timestamp</td></tr>
+    <tr><td>Native Connector</td><td>Glue Connection status, last ETL job run (status, start time, duration, rows extracted)</td></tr>
+  </table>
+
+  <h2>CMO Detail Page</h2>
+  <p>Clicking a CMO name in CMO Partners opens a comprehensive detail page with 4 tabs:</p>
+  <ul>
+    <li><strong>Connections</strong> — all connections for this CMO (create, activate, view credentials)</li>
+    <li><strong>Schemas</strong> — all schemas defined for this CMO (create, expand, register)</li>
+    <li><strong>Data Contracts</strong> — all contracts for this CMO with status</li>
+    <li><strong>Batches</strong> — all batch submissions for this CMO with completeness</li>
+  </ul>
+  <p>This provides a single-pane view of everything related to a specific CMO without navigating multiple pages.</p>
+
+  <h2>Multi-Tenant Data Isolation</h2>
+  <p>The platform enforces strict data isolation between CMOs:</p>
+  <ul>
+    <li>CMO user accounts carry a <code>custom:organization</code> claim in their JWT token</li>
+    <li>All API endpoints enforce filtering server-side using this JWT claim</li>
+    <li>CMO users <strong>cannot</strong> see data from other organizations — even if they modify query parameters</li>
+    <li>Merck admins see all data across all CMOs (with optional CMO filter)</li>
+    <li>S3 data lake paths are partitioned by <code>cmoId</code> for physical isolation</li>
+  </ul>
+
+  <h2>Natural Language Query</h2>
+  <p>The NL Query page allows Merck admins to ask questions about CMO data in plain English. Powered by Amazon Bedrock, it translates natural language into SQL queries against the data lake via Amazon Athena.</p>
+  <p>Example queries:</p>
+  <ul>
+    <li>"Show me all batches from Lonza that are overdue"</li>
+    <li>"What is the average yield for Ibuprofen 200mg in the last 30 days?"</li>
+    <li>"Which CMOs have missing CoA documents?"</li>
+  </ul>
+
+  <h2>Entity Model</h2>
+  <pre><code>CMO (organization)
+ ├── Products (drug products assigned to this CMO)
+ ├── Connections (SFTP, Native, AI — one or more per CMO)
+ ├── Schemas (data format definitions — one or more per CMO)
+ └── Contracts (links CMO + Product + Connection + Schema + SLAs)
+      └── Batches (manufacturing events with lot numbers)
+           └── Data Elements (BMR, CoA, In-Process, Yield)</code></pre>
+
+  <h2>AWS Infrastructure</h2>
+  <table>
+    <tr><th>Service</th><th>Purpose</th></tr>
+    <tr><td>Amazon Cognito</td><td>Authentication — user pools, groups (merck-admins, cmo-users), hosted UI</td></tr>
+    <tr><td>Amazon API Gateway</td><td>REST API management with Cognito JWT authorizer</td></tr>
+    <tr><td>AWS Lambda</td><td>All API handlers (Python) — contract, connection, batch, schema, SLA checker</td></tr>
+    <tr><td>Amazon DynamoDB</td><td>Data storage — CMOs, contracts, products, batches, connections, schemas</td></tr>
+    <tr><td>Amazon S3</td><td>Data lake — Medallion architecture (Bronze/Silver/Gold layers)</td></tr>
+    <tr><td>AWS Transfer Family</td><td>Managed SFTP server with custom Lambda identity provider</td></tr>
+    <tr><td>Amazon Textract</td><td>AI document extraction (multi-page PDFs — async pipeline)</td></tr>
+    <tr><td>Amazon Rekognition</td><td>Image analysis (labels, text detection)</td></tr>
+    <tr><td>AWS Glue</td><td>Schema Registry, JDBC Connections, ETL Jobs (PySpark), Triggers</td></tr>
+    <tr><td>AWS Step Functions</td><td>Pipeline deployment orchestration</td></tr>
+    <tr><td>Amazon EventBridge</td><td>Scheduled SLA checking (daily at 6am UTC)</td></tr>
+    <tr><td>AWS Secrets Manager</td><td>SFTP and database credentials</td></tr>
+    <tr><td>AWS KMS</td><td>Encryption at rest (customer-managed keys per CMO)</td></tr>
+    <tr><td>Amazon Bedrock</td><td>Natural language queries (Claude)</td></tr>
+    <tr><td>AWS Amplify</td><td>Frontend hosting (React + Vite)</td></tr>
+  </table>
+
+  <h2>Compliance</h2>
+  <table>
+    <tr><th>Requirement</th><th>How It's Addressed</th></tr>
+    <tr><td>FDA 21 CFR Part 11 — Electronic records</td><td>Cognito authentication, CloudTrail audit logging, immutable Bronze layer, approval workflow with user identity tracking</td></tr>
+    <tr><td>FDA 21 CFR Part 11 — Audit trail</td><td>All contract state changes record who performed the action (submitted_by, accepted_by, approved_by) with timestamps</td></tr>
+    <tr><td>GxP Data Integrity</td><td>lot-number-partitioned S3 paths, field-level traceability from source to Bronze, KMS encryption</td></tr>
+    <tr><td>ALCOA+ — Attributable</td><td>Every action linked to authenticated user via JWT claims</td></tr>
+    <tr><td>ALCOA+ — Original</td><td>Bronze layer stores original files unchanged (immutable)</td></tr>
+    <tr><td>Multi-tenant isolation</td><td>JWT-enforced filtering + per-CMO S3 path partitioning + KMS keys</td></tr>
+  </table>
+
+</body>
+</html>

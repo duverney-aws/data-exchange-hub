@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMO Self-Service Onboarding - Pharma Data Exchange Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Amazon Ember', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #232F3E 0%, #131A22 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: #fff;
+            color: #232F3E;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 60px;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-header {
+            border-bottom: 4px solid #FF9900;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .slide-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #232F3E;
+            margin-bottom: 10px;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.3em;
+            color: #FF9900;
+        }
+        
+        .slide-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .slide-content h3 {
+            color: #FF9900;
+            margin: 25px 0 15px 0;
+            font-size: 1.5em;
+        }
+        
+        .slide-content ul, .slide-content ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .slide-content li {
+            margin-bottom: 10px;
+        }
+        
+        .flow-diagram {
+            background: #F8F9FA;
+            border: 2px solid #232F3E;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        .highlight-box {
+            background: #FFF3CD;
+            border-left: 5px solid #FF9900;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .step-box {
+            background: #E8F4F8;
+            border-left: 5px solid #0073BB;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #FF9900;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-right: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #232F3E;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .nav-button {
+            background: #FF9900;
+            color: #232F3E;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .nav-button:hover {
+            background: #EC7211;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,153,0,0.3);
+        }
+        
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(35, 47, 62, 0.9);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+        
+        .aws-logo {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FF9900;
+            z-index: 1000;
+        }
+        
+        .metric-box {
+            display: inline-block;
+            background: #232F3E;
+            color: #FF9900;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 180px;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .metric-label {
+            font-size: 1em;
+            color: #fff;
+            display: block;
+            margin-top: 10px;
+        }
+        
+        .benefit-card {
+            background: white;
+            border: 2px solid #FF9900;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .benefit-card h4 {
+            color: #FF9900;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="aws-logo">AWS</div>
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">10</span>
+    </div>
+    
+    <div class="presentation">
+        
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-header">
+                <h1 class="slide-title">CMO Self-Service Onboarding</h1>
+                <p class="slide-subtitle">Pharma Data Exchange Hub</p>
+            </div>
+            <div class="slide-content">
+                <h3>Revolutionizing CMO Data Integration</h3>
+                <p style="font-size: 1.3em; margin: 40px 0;">
+                    From 3-6 months of custom integration to 30 minutes of self-service onboarding
+                </p>
+                
+                <div class="metric-box">
+                    <span class="metric-value">90%</span>
+                    <span class="metric-label">Time Reduction</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">30 min</span>
+                    <span class="metric-label">CMO Onboarding</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">< 5 min</span>
+                    <span class="metric-label">Pipeline Activation</span>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 60px;">
+                    <h3 style="margin-top: 0;">Key Innovation</h3>
+                    <p style="font-size: 1.2em;">
+                        CMOs self-register, define their data schema, test with sample data, 
+                        and Merck activates the pipeline with one click. No custom development required.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Problem -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">The Problem We're Solving</h1>
+                <p class="slide-subtitle">Current State Pain Points</p>
+            </div>
+            <div class="slide-content">
+                <h3>Traditional CMO Integration Process</h3>
+                <div class="flow-diagram">
+┌─────────────────────────────────────────────────────────────┐
+│  Week 1-4:   Legal negotiations (custom contracts)          │
+│  Week 5-8:   Technical discovery (what data, what format)   │
+│  Week 9-16:  Custom integration development                 │
+│  Week 17-20: Testing and validation                         │
+│  Week 21-24: Production deployment                          │
+│                                                              │
+│  TOTAL: 3-6 months per CMO                                  │
+└─────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h3>Pain Points</h3>
+                <table>
+                    <tr>
+                        <th>Stakeholder</th>
+                        <th>Pain Point</th>
+                        <th>Impact</th>
+                    </tr>
+                    <tr>
+                        <td><strong>CMOs</strong></td>
+                        <td>Long wait times, complex requirements</td>
+                        <td>Delayed partnerships</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Merck IT</strong></td>
+                        <td>200+ hours per CMO, not scalable</td>
+                        <td>Bottleneck, high cost</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Merck Business</strong></td>
+                        <td>Delayed access to manufacturing data</td>
+                        <td>Slower decision making</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Merck Legal</strong></td>
+                        <td>Custom contracts every time</td>
+                        <td>4-8 weeks per CMO</td>
+                    </tr>
+                </table>
+
+                <div class="highlight-box">
+                    <strong>Root Cause:</strong> No standardized process for data movement. 
+                    Every CMO integration is treated as a unique project.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Solution Overview -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">The Solution</h1>
+                <p class="slide-subtitle">Self-Service Onboarding Portal</p>
+            </div>
+            <div class="slide-content">
+                <h3>New CMO Onboarding Flow</h3>
+                <div class="flow-diagram">
+┌─────────────────────────────────────────────────────────────┐
+│  Step 1: CMO receives email with onboarding URL             │
+│           https://cmo-onboarding.merck.com/register         │
+│                                                              │
+│  Step 2: CMO completes self-service wizard (15 min)         │
+│           • Register account                                │
+│           • Select integration pattern                      │
+│           • Define data schema                              │
+│           • Map fields to Merck canonical model             │
+│                                                              │
+│  Step 3: CMO tests with sample data (10 min)                │
+│           • Upload test file                                │
+│           • Real-time validation                            │
+│           • Quality score displayed                         │
+│                                                              │
+│  Step 4: Merck approves (5 min)                             │
+│           • Review data contract                            │
+│           • One-click approval                              │
+│                                                              │
+│  Step 5: Pipeline auto-deployed (< 5 min)                   │
+│           • Infrastructure provisioned                      │
+│           • Monitoring configured                           │
+│           • CMO receives connection details                 │
+│                                                              │
+│  Step 6: CMO starts publishing data (ongoing)               │
+│           • Automatic validation                            │
+│           • Real-time quality monitoring                    │
+│                                                              │
+│  TOTAL: 35 minutes (vs 3-6 months)                          │
+└─────────────────────────────────────────────────────────────┘
+                </div>
+
+                <div class="highlight-box">
+                    <strong>Key Insight:</strong> By standardizing the process and providing 
+                    self-service tools, we eliminate 90% of the integration time.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Step-by-Step Walkthrough -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Step-by-Step Walkthrough</h1>
+                <p class="slide-subtitle">CMO Self-Service Experience</p>
+            </div>
+            <div class="slide-content">
+                <div class="step-box">
+                    <span class="step-number">1</span>
+                    <strong>CMO Registration</strong>
+                    <ul>
+                        <li>CMO receives invitation email from Merck</li>
+                        <li>Clicks unique onboarding URL</li>
+                        <li>Creates account (name, email, company)</li>
+                        <li>Sets up authentication (password, MFA)</li>
+                    </ul>
+                    <em>Time: 5 minutes</em>
+                </div>
+
+                <div class="step-box">
+                    <span class="step-number">2</span>
+                    <strong>Pattern Selection</strong>
+                    <ul>
+                        <li>Portal shows 3 integration patterns</li>
+                        <li>CMO selects based on their capabilities:
+                            <ul>
+                                <li>Pattern 1: Native Connector (Snowflake, Oracle, SAP)</li>
+                                <li>Pattern 2: SFTP (works with any system)</li>
+                                <li>Pattern 3: Unstructured AI (PDFs, images)</li>
+                            </ul>
+                        </li>
+                        <li>Portal provides pattern-specific instructions</li>
+                    </ul>
+                    <em>Time: 3 minutes</em>
+                </div>
+
+                <div class="step-box">
+                    <span class="step-number">3</span>
+                    <strong>Schema Definition</strong>
+                    <ul>
+                        <li>CMO uploads sample data file OR</li>
+                        <li>Selects from standard templates (batch, quality, materials)</li>
+                        <li>Portal auto-infers schema from sample</li>
+                        <li>CMO reviews/edits schema in visual editor</li>
+                    </ul>
+                    <em>Time: 5 minutes</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Field Mapping -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Field Mapping</h1>
+                <p class="slide-subtitle">CMO Fields → Merck Canonical Model</p>
+            </div>
+            <div class="slide-content">
+                <div class="step-box">
+                    <span class="step-number">4</span>
+                    <strong>Field Mapping (Drag & Drop)</strong>
+                    <p>CMO maps their field names to Merck's canonical data model</p>
+                </div>
+
+                <h3>Example Mapping</h3>
+                <table>
+                    <tr>
+                        <th>CMO Field Name</th>
+                        <th>CMO Data Type</th>
+                        <th>→</th>
+                        <th>Merck Canonical Field</th>
+                    </tr>
+                    <tr>
+                        <td>lot_number</td>
+                        <td>string</td>
+                        <td>→</td>
+                        <td>batch_id</td>
+                    </tr>
+                    <tr>
+                        <td>prod_code</td>
+                        <td>string</td>
+                        <td>→</td>
+                        <td>product_code</td>
+                    </tr>
+                    <tr>
+                        <td>start_dt</td>
+                        <td>datetime</td>
+                        <td>→</td>
+                        <td>manufacturing_start_date</td>
+                    </tr>
+                    <tr>
+                        <td>end_dt</td>
+                        <td>datetime</td>
+                        <td>→</td>
+                        <td>manufacturing_end_date</td>
+                    </tr>
+                    <tr>
+                        <td>yield_pct</td>
+                        <td>decimal</td>
+                        <td>→</td>
+                        <td>yield_percentage</td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>→</td>
+                        <td>quality_status</td>
+                    </tr>
+                </table>
+
+                <div class="highlight-box">
+                    <strong>Smart Mapping:</strong> Portal suggests mappings based on field names 
+                    and data types. CMO just confirms or adjusts.
+                </div>
+
+                <p><em>Time: 5 minutes</em></p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Test & Validate -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Test & Validate</h1>
+                <p class="slide-subtitle">Real-Time Validation Feedback</p>
+            </div>
+            <div class="slide-content">
+                <div class="step-box">
+                    <span class="step-number">5</span>
+                    <strong>Upload Test Data</strong>
+                    <ul>
+                        <li>CMO uploads test file (CSV, JSON, Parquet)</li>
+                        <li>Portal validates against defined schema</li>
+                        <li>Real-time feedback on errors</li>
+                        <li>Data quality score calculated</li>
+                    </ul>
+                </div>
+
+                <h3>Validation Results Example</h3>
+                <div class="benefit-card">
+                    <h4>✅ Validation Passed (Score: 98/100)</h4>
+                    <ul>
+                        <li>✅ All required fields present</li>
+                        <li>✅ Data types correct</li>
+                        <li>✅ No duplicate batch IDs</li>
+                        <li>✅ Yield percentages in valid range (0-100)</li>
+                        <li>⚠️ 2 records missing optional field "equipment_id"</li>
+                    </ul>
+                    <p><strong>Status:</strong> Ready for production</p>
+                </div>
+
+                <h3>If Validation Fails</h3>
+                <div class="benefit-card">
+                    <h4>❌ Validation Failed (Score: 65/100)</h4>
+                    <ul>
+                        <li>❌ 5 records missing required field "batch_id"</li>
+                        <li>❌ 3 records have invalid date format</li>
+                        <li>⚠️ 10 records have yield > 100% (check data)</li>
+                    </ul>
+                    <p><strong>Action:</strong> Fix errors and re-upload</p>
+                </div>
+
+                <p><em>Time: 10 minutes (including fixes)</em></p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Merck Approval -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Merck Approval Process</h1>
+                <p class="slide-subtitle">One-Click Activation</p>
+            </div>
+            <div class="slide-content">
+                <div class="step-box">
+                    <span class="step-number">6</span>
+                    <strong>Merck Reviews & Approves</strong>
+                </div>
+
+                <h3>What Merck Reviews</h3>
+                <table>
+                    <tr>
+                        <th>Item</th>
+                        <th>What to Check</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Contract</strong></td>
+                        <td>Schema, quality rules, delivery frequency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Field Mappings</strong></td>
+                        <td>CMO fields correctly mapped to canonical model</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Test Results</strong></td>
+                        <td>Validation score > 95%, no critical errors</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Legal Agreement</strong></td>
+                        <td>Pre-approved template signed by CMO</td>
+                    </tr>
+                </table>
+
+                <h3>Approval Actions</h3>
+                <div class="benefit-card">
+                    <h4>Option 1: Approve</h4>
+                    <p>Click "Activate Pipeline" button</p>
+                    <ul>
+                        <li>Pipeline auto-deployed in < 5 minutes</li>
+                        <li>CMO receives connection details via email</li>
+                        <li>CMO can start publishing data immediately</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>Option 2: Request Changes</h4>
+                    <p>Send feedback to CMO via portal</p>
+                    <ul>
+                        <li>CMO makes adjustments</li>
+                        <li>Re-submits for approval</li>
+                    </ul>
+                </div>
+
+                <p><em>Time: 5 minutes</em></p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Automated Pipeline Activation -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Automated Pipeline Activation</h1>
+                <p class="slide-subtitle">What Happens Behind the Scenes</p>
+            </div>
+            <div class="slide-content">
+                <h3>When Merck Clicks "Activate"</h3>
+                <div class="flow-diagram">
+Step Functions Workflow (Fully Automated):
+
+1. Create S3 bucket prefix for CMO
+   s3://merck-cmo-hub/bronze/cmo-alpha/
+
+2. Register schema in Glue Schema Registry
+   Schema: batch-manufacturing v1.0
+
+3. Store data contract in DynamoDB
+   Contract ID: dc-12345
+
+4. Deploy Glue ETL job from template
+   Job: cmo-alpha-batch-manufacturing-etl
+   • Inject schema from registry
+   • Inject field mappings from contract
+   • Inject data quality rules
+
+5. Configure connection (pattern-specific)
+   • Pattern 1: Glue connection to CMO database
+   • Pattern 2: Transfer Family SFTP user
+   • Pattern 3: S3 presigned upload URL
+
+6. Setup monitoring dashboard
+   CloudWatch dashboard: cmo-alpha-monitoring
+
+7. Send confirmation email to CMO
+   Subject: "Your pipeline is ready!"
+   Body: Connection details, documentation link
+
+TOTAL TIME: < 5 minutes
+                </div>
+
+                <div class="highlight-box">
+                    <strong>Zero Manual Work:</strong> Everything is automated via Infrastructure as Code (IaC)
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Benefits Summary -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Benefits Summary</h1>
+                <p class="slide-subtitle">Value for All Stakeholders</p>
+            </div>
+            <div class="slide-content">
+                <h3>For CMOs</h3>
+                <div class="benefit-card">
+                    <ul>
+                        <li>✅ <strong>Self-service:</strong> No waiting for Merck IT</li>
+                        <li>✅ <strong>Flexible:</strong> Choose pattern that fits their system</li>
+                        <li>✅ <strong>Transparent:</strong> Real-time validation feedback</li>
+                        <li>✅ <strong>Simple:</strong> Upload data, system handles the rest</li>
+                        <li>✅ <strong>Fast:</strong> Onboarding in 30 minutes vs 3-6 months</li>
+                    </ul>
+                </div>
+
+                <h3>For Merck</h3>
+                <div class="benefit-card">
+                    <ul>
+                        <li>✅ <strong>Automated:</strong> No manual pipeline creation</li>
+                        <li>✅ <strong>Consistent:</strong> All CMOs use canonical model</li>
+                        <li>✅ <strong>Scalable:</strong> Onboard 100+ CMOs without linear effort</li>
+                        <li>✅ <strong>Governed:</strong> Data contracts enforce quality</li>
+                        <li>✅ <strong>Fast:</strong> Activate pipeline in < 5 minutes</li>
+                        <li>✅ <strong>Cost-effective:</strong> 90% reduction in integration effort</li>
+                    </ul>
+                </div>
+
+                <div class="metric-box">
+                    <span class="metric-value">90%</span>
+                    <span class="metric-label">Time Reduction</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">90%</span>
+                    <span class="metric-label">Effort Reduction</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-value">100%</span>
+                    <span class="metric-label">CMO Coverage</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Next Steps -->
+        <div class="slide">
+            <div class="slide-header">
+                <h1 class="slide-title">Next Steps</h1>
+                <p class="slide-subtitle">Getting Started</p>
+            </div>
+            <div class="slide-content">
+                <h3>Implementation Phases</h3>
+                
+                <div class="step-box">
+                    <strong>Phase 1: Manual Onboarding (Weeks 1-6)</strong>
+                    <ul>
+                        <li>Merck manually creates pipelines for 2 pilot CMOs</li>
+                        <li>Document data contracts</li>
+                        <li>Validate approach</li>
+                    </ul>
+                </div>
+
+                <div class="step-box">
+                    <strong>Phase 2: Semi-Automated (Weeks 7-12)</strong>
+                    <ul>
+                        <li>Build schema registry</li>
+                        <li>Create pipeline templates</li>
+                        <li>Automate pipeline deployment</li>
+                        <li>Onboard 5-10 CMOs</li>
+                    </ul>
+                </div>
+
+                <div class="step-box">
+                    <strong>Phase 3: Self-Service Portal (Weeks 13-20)</strong>
+                    <ul>
+                        <li>Build CMO onboarding portal (React UI)</li>
+                        <li>Enable CMO self-service</li>
+                        <li>Merck approval workflow</li>
+                        <li>Scale to 20+ CMOs</li>
+                    </ul>
+                </div>
+
+                <h3>Immediate Actions</h3>
+                <ol>
+                    <li>Select 2 pilot CMOs (1 modern, 1 legacy)</li>
+                    <li>Develop legal template library</li>
+                    <li>Define canonical data model</li>
+                    <li>Build schema registry</li>
+                    <li>Create pipeline templates</li>
+                </ol>
+
+                <div class="highlight-box">
+                    <strong>Timeline:</strong> First CMO live in 6 weeks, self-service portal in 20 weeks
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-button" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            }
+        });
+        
+        showSlide(0);
+    </script>
+</body>
+</html>
