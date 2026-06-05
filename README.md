@@ -55,6 +55,7 @@ docs/                         # Static documentation
 - **Transfer Family** — Managed SFTP
 - **Textract / Rekognition** — AI document processing
 - **Glue** — Schema registry, JDBC connections, ETL jobs
+- **Bedrock** — Natural language queries (Claude Haiku)
 - **EventBridge** — SLA monitoring (daily scheduled checks)
 - **Secrets Manager** — Credential storage
 - **KMS** — Encryption at rest
