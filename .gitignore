@@ -21,13 +21,13 @@ cdk/lambda_src/
 .env
 .env.local
 frontend/.env.local
-*.txt
 cognito-users.txt
 GitHub personal token.txt
 
-# IDE
+# IDE & tools
 .idea/
 .vscode/
+.kiro/
 
 # OS
 .DS_Store
@@ -53,13 +53,34 @@ test-*.csv
 test-*.json
 sample_*
 
-# Generated artifacts
+# Generated/one-off scripts
 generate_*.py
 
-# Old memory snapshots
-MEMORY-*.md
-
-# Internal notes
+# Project memory & internal docs
+MEMORY*.md
 SYSTEM-CONFIG.md
 AMPLIFY_DEBUGGING_GUIDE.md
 prompt.txt
+
+# Strategy & presentation docs (internal engagement artifacts)
+Merck*.md
+*Presentation*.md
+*presentation*.html
+*architecture*.html
+*architecture*.txt
+*architecture*code*.py
+pharma-*.py
+pharma-*.html
+platform-agnostics.md
+Connectivity_Requirements.md
+AWS_Reference_Architecture.md
+CMO_Self_Service_Onboarding_Architecture.md
+Data_Contract_Explained.md
+Schema_Registry_Explained.md
+PowerPoint_Presentation_Outline.md
+Pharma_Requirements.md
+Executive\ Summary\ Presentation.md
+data-contract.yml
+
+# E2E test docs
+E2E_*.md
