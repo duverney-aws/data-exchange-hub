@@ -1,4 +1,0 @@
-batch_id,product_name,lot_number,quantity,unit,manufacturing_date,expiry_date,status,yield_percentage
-B-2026-001,Keytruda 50mg,LOT-K-001,50000,vials,2026-04-01,2028-04-01,released,98.5
-B-2026-002,Keytruda 50mg,LOT-K-002,75000,vials,2026-04-15,2028-04-15,in_progress,97.2
-B-2026-003,Keytruda 50mg,LOT-K-003,60000,vials,2026-04-20,2028-04-20,pending,0

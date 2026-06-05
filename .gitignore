@@ -1,3 +1,8 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+
 # Dependencies
 node_modules/
 frontend/node_modules/
@@ -12,10 +17,13 @@ __pycache__/
 *.pyo
 cdk/lambda_src/
 
-# Environment
+# Environment & credentials
 .env
 .env.local
 frontend/.env.local
+*.txt
+cognito-users.txt
+GitHub personal token.txt
 
 # IDE
 .idea/
@@ -28,14 +36,30 @@ Thumbs.db
 # CDK
 cdk/cdk.out/
 cdk/.cdk.staging/
-
-# CDK output
 cdk/cdk-out-new/
-cdk/cdk.out/
 cdk.out/
 
 # Hypothesis test cache
 .hypothesis/
 
-# PowerPoint files (large binary)
+# Binary documents
 *.pptx
+*.docx
+*.pdf
+*.png
+
+# Test data
+test-*.csv
+test-*.json
+sample_*
+
+# Generated artifacts
+generate_*.py
+
+# Old memory snapshots
+MEMORY-*.md
+
+# Internal notes
+SYSTEM-CONFIG.md
+AMPLIFY_DEBUGGING_GUIDE.md
+prompt.txt
